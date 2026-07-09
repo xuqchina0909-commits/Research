@@ -22,3 +22,6 @@ yarn-error.log*
 # Local secrets
 .env
 .env.*
+
+# Third-party checkouts for reproduction work
+data-agent-reproduce/repos/
