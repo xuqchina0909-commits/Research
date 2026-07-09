@@ -1,0 +1,21 @@
+{
+  "system": "DeepAnalyze",
+  "task_file": "/Users/xuq/Documents/Research/data-agent-reproduce/datasets/sample_krama_task.json",
+  "data_dir": null,
+  "deepanalyze_repo": "/Users/xuq/Documents/Research/data-agent-reproduce/repos/DeepAnalyze",
+  "status": "blocked",
+  "error": null,
+  "reason": "DeepAnalyze repository is not available locally.",
+  "discovery": {
+    "repo_exists": false,
+    "readme": false,
+    "requirements": false,
+    "pyproject": false,
+    "examples_dir": false,
+    "scripts_dir": false
+  },
+  "generated_code_path": null,
+  "final_answer": null,
+  "cost": "unknown",
+  "runtime_seconds": 0.0
+}

@@ -1,0 +1,4 @@
+system,task_id,workload,final_score,subtask_score,code_success,runtime,cost,error_count,human_fix_count,notes
+krama_official_baseline,not_run,Environment,not_evaluable,not_evaluable,false,,unknown,1,0,"Environment workload not attempted because Legal baseline did not run."
+deepanalyze,not_run,Environment,not_evaluable,not_evaluable,false,,unknown,1,0,"Environment workload not attempted because KramaBench and DeepAnalyze repositories were not locally available."
+

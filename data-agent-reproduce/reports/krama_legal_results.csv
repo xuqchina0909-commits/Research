@@ -1,0 +1,4 @@
+system,task_id,workload,final_score,subtask_score,code_success,runtime,cost,error_count,human_fix_count,notes
+krama_official_baseline,not_run,Legal,not_evaluable,not_evaluable,false,,unknown,1,0,"KramaBench repository could not be cloned/downloaded; no official baseline run performed."
+deepanalyze,not_run,Legal,not_evaluable,not_evaluable,false,,unknown,1,0,"DeepAnalyze and KramaBench repositories unavailable locally; adapter scaffold created but not executed."
+

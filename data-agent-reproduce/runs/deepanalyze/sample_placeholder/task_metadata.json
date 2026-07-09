@@ -1,0 +1,12 @@
+{
+  "task_path": "/Users/xuq/Documents/Research/data-agent-reproduce/datasets/sample_krama_task.json",
+  "task_id": "sample_legal_placeholder",
+  "workload": "Legal",
+  "question": "Placeholder task used only to validate the DeepAnalyze adapter artifact flow.",
+  "raw_keys": [
+    "data_files",
+    "question",
+    "task_id",
+    "workload"
+  ]
+}
