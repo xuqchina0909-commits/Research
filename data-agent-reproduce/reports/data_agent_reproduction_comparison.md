@@ -17,6 +17,7 @@
 - DeepEye source was cloned successfully; its Python workflow engine and backend workflow contracts passed basic local validation.
 - DeepPrep still has no locally discoverable standalone runnable module; it remains a paper/mechanism or future companion rather than a full SUT in this run.
 - DAComp was cloned successfully, and DAComp-DA `dacomp-001` was validated with its minimal SQLite dataset.
+- DeepAnalyze was run on KramaBench Legal easy 5 and DAComp-DA `dacomp-001`; DeepEye remains core-workflow-only without Docker.
 - Result CSVs were generated with `not_evaluable` rows instead of fabricated scores.
 
 ## 2. Experiment Objects
@@ -150,6 +151,13 @@ Blocked:
 | Report generation | Product claims reports/dashboard/video; not verified without Docker stack. | Report/code path partially validated; full official report generation not benchmarked. | Not verified. |
 | Quantitative evaluation | Basic workflow smoke final result `0.6`; not a benchmark score. | KramaBench Legal single-task answer `13.1628`, score 100.0 in the baseline harness; multi-task pending. | Not available. |
 | Engineering maturity | Strong modular structure and tests; heavy deployment dependencies. | Runnable API code plus model/backend dependency; external model compatibility needs patching. | Unknown until code is released or provided. |
+
+Latest multi-task comparison:
+
+- DeepAnalyze on KramaBench Legal easy 5: 2 correct, 2 wrong, 1 failed.
+- DeepAnalyze on DAComp-DA `dacomp-001`: completed, official judge not run, qualitative report quality insufficient.
+- DeepEye: core workflow validation only; no benchmark task execution without Docker.
+- Detailed report: `reports/deepanalyze_deepeye_benchmark_comparison.md`.
 
 ## 10. Interim Technical Insight
 

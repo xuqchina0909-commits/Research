@@ -1,0 +1,27 @@
+{
+  "benchmark": "KramaBench",
+  "system": "DeepAnalyze",
+  "task_id": "legal-easy-10",
+  "status": "failed",
+  "question": "In which years were Fraud reports at least 50% of the total reports?",
+  "data_sources": [
+    "2024_CSN_Number_of_Reports_by_Type.csv"
+  ],
+  "expected_answer": [
+    2010,
+    2011,
+    2012,
+    2013,
+    2014,
+    2019
+  ],
+  "answer_type": "list_exact",
+  "final_answer": null,
+  "score": {
+    "correct": false,
+    "reason": "ChunkedEncodingError: Response ended prematurely"
+  },
+  "text": "ChunkedEncodingError: Response ended prematurely",
+  "final_delta": {},
+  "runtime_seconds": 2156.234
+}

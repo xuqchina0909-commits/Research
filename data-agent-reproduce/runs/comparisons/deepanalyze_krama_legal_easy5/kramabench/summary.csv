@@ -1,0 +1,6 @@
+benchmark,system,task_id,status,correct,expected_answer,final_answer,runtime_seconds,notes
+KramaBench,DeepAnalyze,legal-easy-3,completed,True,13.1628,13.1628,10.154,
+KramaBench,DeepAnalyze,legal-easy-4,completed,True,2111635,2111635,25.961,
+KramaBench,DeepAnalyze,legal-easy-5,completed,False,5435,5635,3.635,
+KramaBench,DeepAnalyze,legal-easy-9,completed,False,2002,2012,38.209,
+KramaBench,DeepAnalyze,legal-easy-10,failed,False,"[2010, 2011, 2012, 2013, 2014, 2019]",,2156.234,ChunkedEncodingError: Response ended prematurely

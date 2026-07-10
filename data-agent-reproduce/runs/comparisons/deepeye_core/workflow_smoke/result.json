@@ -1,0 +1,91 @@
+{
+  "system": "DeepEye",
+  "status": "success",
+  "workflow_id": "wf_accuracy",
+  "workflow_name": "Accuracy workflow",
+  "validation_issues": [],
+  "node_order": [
+    "labels",
+    "preds",
+    "compare",
+    "accuracy"
+  ],
+  "node_runs": {
+    "labels": {
+      "status": "success",
+      "inputs": {},
+      "outputs": {
+        "items": [
+          true,
+          false,
+          true,
+          true,
+          false
+        ]
+      },
+      "error": null
+    },
+    "preds": {
+      "status": "success",
+      "inputs": {},
+      "outputs": {
+        "items": [
+          true,
+          true,
+          true,
+          false,
+          false
+        ]
+      },
+      "error": null
+    },
+    "compare": {
+      "status": "success",
+      "inputs": {
+        "labels": [
+          true,
+          false,
+          true,
+          true,
+          false
+        ],
+        "predictions": [
+          true,
+          true,
+          true,
+          false,
+          false
+        ]
+      },
+      "outputs": {
+        "correct_flags": [
+          true,
+          false,
+          true,
+          false,
+          true
+        ]
+      },
+      "error": null
+    },
+    "accuracy": {
+      "status": "success",
+      "inputs": {
+        "correct_flags": [
+          true,
+          false,
+          true,
+          false,
+          true
+        ]
+      },
+      "outputs": {
+        "accuracy": 0.6
+      },
+      "error": null
+    }
+  },
+  "final_answer": 0.6,
+  "runtime_seconds": 0.0002,
+  "notes": "Python workflow-engine smoke test only; full Docker/WebUI stack is not started in this adapter."
+}

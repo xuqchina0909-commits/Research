@@ -1,0 +1,18 @@
+<Analyze>...</Analyze>
+<Code>```python
+import pandas as pd
+
+# Read the CSV file
+df = pd.read_csv('2024_CSN_Fraud_Reports_by_Payment_Method.csv')
+
+# Extract the Total $ Loss column and convert to numeric values
+# Remove the '$' and 'M' suffix and convert to millions of dollars
+total_loss_millions = df[' Total $ Loss '].str.replace('$', '').str.replace('M', '').astype(float)
+
+# Sum all the values
+total_fraud_amount = total_loss_millions.sum()
+
+# Return the integer value in millions of dollars
+int(total_fraud_amount)
+```</Code>
+<Answer>5635</Answer>

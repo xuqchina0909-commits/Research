@@ -421,3 +421,82 @@ data-agent-reproduce/runs/dacomp/minimal_probe/dacomp-001.json
 ```
 
 结论：DAComp-DA 最小任务的数据层验证通过；尚未运行 DAComp 官方 baseline agent 或 LLM judge。
+
+## DeepAnalyze / DeepEye 多任务横向对比
+
+日期：2026-07-10
+
+本轮按照用户要求，基于 KramaBench 和 DAComp 对 DeepAnalyze 与 DeepEye 做多任务横向验证。由于当前不安装 Docker，DeepEye 只能验证 core workflow，无法执行完整 benchmark 数据任务。
+
+新增 runner：
+
+```text
+data-agent-reproduce/adapters/deepanalyze_benchmark_runner.py
+```
+
+DeepAnalyze KramaBench 输入：
+
+```text
+data-agent-reproduce/repos/KramaBench/workload/legal-easy-5.json
+```
+
+DeepAnalyze KramaBench 输出：
+
+```text
+data-agent-reproduce/runs/comparisons/deepanalyze_krama_legal_easy5/kramabench/summary.csv
+```
+
+结果：
+
+- `legal-easy-3`：正确，答案 `13.1628`。
+- `legal-easy-4`：正确，答案 `2111635`。
+- `legal-easy-5`：错误，期望 `5435`，输出 `5635`。
+- `legal-easy-9`：错误，期望 `2002`，输出 `2012`。
+- `legal-easy-10`：失败，外部模型流式响应中断。
+
+汇总：
+
+```text
+completed: 4 / 5
+correct: 2 / 5
+failed: 1 / 5
+accuracy: 40%
+```
+
+DeepAnalyze DAComp 输入：
+
+```text
+data-agent-reproduce/repos/DAComp/dacomp-da/tasks/dacomp-001/dacomp-001.sqlite
+```
+
+DeepAnalyze DAComp 输出：
+
+```text
+data-agent-reproduce/runs/comparisons/deepanalyze_dacomp001/dacomp-da/dacomp-001/result.json
+```
+
+结果：
+
+- DeepAnalyze 成功读取 SQLite 并执行代码。
+- 生成中文信贷风险分析报告。
+- 生成 `enterprise_risk_analysis.csv`。
+- 官方 DAComp LLM judge 未运行。
+- 报告质量不足：主要使用 `Credit Rating` 与 `Defaulted`，未充分使用发票流水、上下游依赖和 churn 表。
+
+DeepEye 输出：
+
+```text
+data-agent-reproduce/runs/comparisons/deepeye_core/workflow_smoke/result.json
+```
+
+结果：
+
+- core workflow engine 成功运行。
+- 完整 KramaBench / DAComp benchmark 任务未执行。
+- 原因：当前未安装 Docker，DeepEye 的 WebUI、backend-api、worker、runtime-control、Postgres、Redis、MinIO、Docker sandbox 和 artifact 产物链路未启动。
+
+横向报告：
+
+```text
+data-agent-reproduce/reports/deepanalyze_deepeye_benchmark_comparison.md
+```
