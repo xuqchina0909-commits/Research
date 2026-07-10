@@ -312,3 +312,62 @@ Result:
 - 结论：路线一已通过最小端到端验证。
 
 版本记录：`data-agent-reproduce/adapters/deepanalyze_compat_versions.md`。路线二 `v2-tool-calling` 暂未实现。
+
+## 阶段 3：DeepEye 基本验证
+
+日期：2026-07-10
+
+本阶段按用户调整后的顺序，先验证 DeepEye 和 DeepPrep 的基本可运行性，暂不进行多任务横向评测。
+
+DeepEye 源码已通过 GitHub SSH 克隆到：
+
+```text
+data-agent-reproduce/repos/DeepEye
+```
+
+环境结论：
+
+- 官方完整启动方式是 Docker Compose。
+- 当前系统 PATH 中缺少 `docker`、`node`、`npm`。
+- Codex bundled runtime 提供 Node，但完整 DeepEye 栈仍依赖 Docker，因此本次不启动 WebUI/Compose。
+- 已创建 Python 3.12 虚拟环境：`data-agent-reproduce/.venvs/deepeye`。
+- 已安装 `packages/core` 和 `packages/backend` 的 Python 依赖。
+
+验证命令：
+
+```bash
+/Users/xuq/Documents/Research/data-agent-reproduce/.venvs/deepeye/bin/python -m pytest packages/core/tests -q
+/Users/xuq/Documents/Research/data-agent-reproduce/.venvs/deepeye/bin/python -m pytest packages/backend/app/test/test_workflow_contracts.py packages/backend/app/test/test_workflow_node_specs.py packages/backend/app/test/test_workflow_targets.py packages/backend/app/test/test_workflow_artifacts.py -q
+/Users/xuq/Documents/Research/data-agent-reproduce/.venvs/deepeye/bin/python packages/backend/scripts/export_workflow_contracts.py
+/Users/xuq/Documents/Research/data-agent-reproduce/.venvs/deepeye/bin/python data-agent-reproduce/adapters/deepeye_runner.py
+```
+
+验证结果：
+
+- Core workflow tests：13 passed。
+- Backend workflow contract/node/artifact tests：17 passed。
+- Workflow contract schema 导出成功。
+- `deepeye_runner.py` 成功执行 DeepEye 内置 accuracy workflow。
+- adapter 输出：`data-agent-reproduce/runs/deepeye/workflow_smoke/result.json`。
+- workflow 节点链：`labels -> preds -> compare -> accuracy`。
+- 最终结果：`0.6`。
+
+结论：DeepEye 的 Python workflow engine 和后端 workflow 契约已通过基本验证；完整 Docker/WebUI/沙箱/报告/dashboard/video 链路尚未启动，不能记为已跑通。
+
+## 阶段 4：DeepPrep 状态确认
+
+日期：2026-07-10
+
+检查范围：
+
+- DeepAnalyze README。
+- DeepAnalyze 本地仓库内容。
+- DeepAnalyze playground 中的数据准备任务样本。
+
+结果：
+
+- DeepAnalyze README 将 DeepPrep 描述为 data-preparation companion，并链接 arXiv。
+- 本地 DeepAnalyze 仓库未发现独立 DeepPrep 可运行模块。
+- `playground/DABStep-Research/dabstep_research.jsonl` 存在 `Data Preparation` 类型任务，可作为未来替代验证样本。
+
+结论：DeepPrep 当前不作为完整 SUT 纳入横向评测。后续只有在完整可运行代码发布或用户提供源码后，才升级为独立系统测试。

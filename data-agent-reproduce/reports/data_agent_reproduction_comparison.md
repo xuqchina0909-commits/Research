@@ -13,7 +13,9 @@
 - SiliconFlow `Qwen/Qwen3-Coder-30B-A3B-Instruct` completed the same 1-task Legal smoke test and returned valid JSON plus executable code; the task score was still 0.0, so answer correctness remains to be improved.
 - DeepAnalyze demo was not run yet because it requires DeepAnalyze-8B/vLLM or a DeepAnalyze API key.
 - A runnable DeepAnalyze adapter scaffold was created for later single-task execution once repositories and model settings are available.
-- DeepAnalyze API stage-2 compatibility validation was started with the configured SiliconFlow Qwen3 Coder backend; file upload and service startup passed, but the model did not reliably follow DeepAnalyze's tagged execution protocol.
+- DeepAnalyze API stage-2 compatibility validation passed in `v1-external-compat` mode with the configured SiliconFlow Qwen3 Coder backend on one real Legal CSV task.
+- DeepEye source was cloned successfully; its Python workflow engine and backend workflow contracts passed basic local validation.
+- DeepPrep still has no locally discoverable standalone runnable module; it remains a paper/mechanism or future companion rather than a full SUT in this run.
 - Result CSVs were generated with `not_evaluable` rows instead of fabricated scores.
 
 ## 2. Experiment Objects
@@ -23,8 +25,8 @@
 | DAComp | Later lifecycle/data-intelligence feasibility benchmark. | Not cloned; only stage 0 clone attempted. |
 | KramaBench | Primary small-sample end-to-end Data Agent pipeline benchmark, starting with Legal workload. | Extracted from user-provided zip; harness smoke test runs. |
 | DeepAnalyze | Primary autonomous data science agent candidate for stage 2. | Cloned successfully; README/CLI/API inspected. |
-| DeepEye | Workflow-centric Data Agent candidate for later workflow-native analysis. | Not cloned; Docker also unavailable. |
-| DeepPrep | Data preparation module / paper mechanism to verify later. | Mentioned in DeepAnalyze README as forthcoming companion; full runnable code not yet verified. |
+| DeepEye | Workflow-centric Data Agent candidate for workflow-native analysis. | Cloned successfully; Python workflow engine and backend workflow contracts validated; full Docker stack not started. |
+| DeepPrep | Data preparation module / paper mechanism to verify later. | Mentioned in DeepAnalyze README as companion; no standalone runnable module found locally. |
 
 ## 3. Environment and Reproduction Status
 
@@ -136,17 +138,17 @@ Blocked:
 
 | Dimension | DeepEye | DeepAnalyze | DeepPrep |
 | --- | --- | --- | --- |
-| Core positioning | Workflow-centric Data Agent candidate, to verify later. | End-to-end autonomous data science agent candidate, stage 2 priority. | Data preparation module / paper mechanism, to verify later. |
-| Runnable locally | Not verified. | Not verified. | Not verified. |
-| KramaBench adaptation | Not attempted in stage 0-2. | Adapter scaffold created; not executed. | Not attempted. |
+| Core positioning | Workflow-centric Data Agent system with explicit DAG / node execution model. | End-to-end autonomous data science agent candidate. | Data preparation companion / paper mechanism. |
+| Runnable locally | Partially yes: Python workflow engine and contract tests pass; full Docker/WebUI stack not started. | Partially yes: API/file/code-execution flow passes under `v1-external-compat`; official DeepAnalyze-8B not deployed. | No standalone runnable module found. |
+| KramaBench adaptation | Not yet connected to KramaBench; minimal workflow adapter exists. | One Legal CSV task completed through compatible API flow. | Not attempted; not treated as full SUT. |
 | DAComp adaptation | Not attempted. | Not attempted. | Not attempted. |
-| End-to-end analysis | Not evaluated. | Not evaluated. | Not a full SUT unless complete code is found. |
-| Data preparation | Not evaluated. | Not evaluated. | Primary expected role, unverified. |
-| Workflow controllability | Not evaluated. | Not evaluated. | Not evaluated. |
-| Intermediate inspectability | Not evaluated. | Adapter designed to collect artifacts. | Not evaluated. |
-| Report generation | Not evaluated. | Not evaluated. | Not evaluated. |
-| Quantitative evaluation | Not available yet. | Not available yet. | Not available yet. |
-| Engineering maturity | Not evaluated. | Not evaluated. | Not evaluated. |
+| End-to-end analysis | Not evaluated through full product stack. | Minimal real task completed; multi-task evaluation pending. | Not a full SUT unless complete code is found. |
+| Data preparation | Not evaluated with real data-prep task yet. | Can support data-prep style tasks through DeepAnalyze flow, but not isolated here. | Primary expected role, currently unverified. |
+| Workflow controllability | Strong design signal: typed DAG, node specs, validation, execution context, artifact schema. | Lower-level execution artifacts are inspectable through local compatibility patch. | Not verified. |
+| Intermediate inspectability | Basic node-level inputs/outputs captured by `deepeye_runner.py`. | Generated code, execution errors, retry result, and final answer captured. | Not verified. |
+| Report generation | Product claims reports/dashboard/video; not verified without Docker stack. | Report/code path partially validated; full official report generation not benchmarked. | Not verified. |
+| Quantitative evaluation | Basic workflow smoke final result `0.6`; not a benchmark score. | KramaBench Legal single-task answer `13.1628`, score 100.0 in the baseline harness; multi-task pending. | Not available. |
+| Engineering maturity | Strong modular structure and tests; heavy deployment dependencies. | Runnable API code plus model/backend dependency; external model compatibility needs patching. | Unknown until code is released or provided. |
 
 ## 10. Interim Technical Insight
 
@@ -154,8 +156,8 @@ At this point, the only defensible conclusion is about reproducibility logistics
 
 1. A small-sample KramaBench-first plan remains appropriate, but it depends on reliable repository/data access.
 2. DeepAnalyze should remain the first SUT to adapt because it is closest to the requested end-to-end analysis workflow.
-3. DeepEye likely needs Node/Docker or a backend service path before serious evaluation.
-4. DeepPrep should not be treated as a full SUT until its code availability is verified inside the DeepAnalyze repo or related links.
+3. DeepEye's workflow-centric claim has initial code evidence: local DAG validation/execution passes, but production features still need Docker stack verification.
+4. DeepPrep should not be treated as a full SUT until complete runnable code is available; use DABStep data-preparation samples only as proxy tasks for now.
 5. The evaluation harness should continue to record `not_evaluable` rather than inventing scores when systems do not run.
 
 ## 11. Next Steps
@@ -164,7 +166,8 @@ At this point, the only defensible conclusion is about reproducibility logistics
 2. Re-run stage 0 repository inspection.
 3. Install KramaBench dependencies in an isolated Python environment.
 4. Select 5-10 Legal tasks and run the official baseline.
-5. Install DeepAnalyze, run its official demo, then bind `deepanalyze_runner.py` to the confirmed CLI/API.
+5. After DeepEye and DeepAnalyze both have basic validation, run the same 5-10 KramaBench tasks through comparable adapters.
+6. For DeepEye, next unlock is Docker Compose or a backend-only API path that can accept file data and emit workflow artifacts.
 
 ## 12. Appendix
 
