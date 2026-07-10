@@ -1,4 +1,6 @@
 system,task_id,workload,final_score,subtask_score,code_success,runtime,cost,error_count,human_fix_count,notes
 krama_official_baseline,not_run,Legal,not_evaluable,not_evaluable,false,,unknown,1,0,"KramaBench repository could not be cloned/downloaded; no official baseline run performed."
 deepanalyze,not_run,Legal,not_evaluable,not_evaluable,false,,unknown,1,0,"DeepAnalyze and KramaBench repositories unavailable locally; adapter scaffold created but not executed."
-
+DummySystem,legal-tiny,Legal,0.0,not_evaluable,true,0.1263,0,0,0,"Harness smoke test completed after manual KramaBench zip extraction; dummy answer expected to score 0."
+DummySystem,legal-easy-5,Legal,0.0,not_evaluable,true,0.3432,0,0,0,"5-task Legal easy smoke test completed; task IDs legal-easy-3/4/5/9/10; dummy answer expected to score 0."
+DS-GURU,legal-easy-5,Legal,not_evaluable,not_evaluable,false,,unknown,1,0,"Official DS-GURU baseline requires a valid model API key; OPENAI_API_KEY/ANTHROPIC_API_KEY/TOGETHER_API_KEY were not configured."

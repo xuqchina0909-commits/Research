@@ -1,0 +1,13 @@
+{
+  "task_id": "legal-easy-5",
+  "model_output": {
+    "answer": "A dummy answer",
+    "id": "legal-easy-5"
+  },
+  "code": "\n# Dummy pipeline code\ndef process_data():\n    result = {\"answer\": \"dummy result\"}\n    return result\n\nif __name__ == \"__main__\":\n    output = process_data()\n    print(output)\n",
+  "token_usage_sut": 0,
+  "token_usage_sut_input": 0,
+  "token_usage_sut_output": 0,
+  "subresponses": [],
+  "runtime": 0.3319880962371826
+}

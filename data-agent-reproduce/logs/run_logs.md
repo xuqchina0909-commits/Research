@@ -71,3 +71,66 @@ curl: (28) Operation timed out after 120003 milliseconds with 0 bytes received
   "cost": "unknown"
 }
 ```
+
+## Follow-up: KramaBench Harness Smoke Tests
+
+Date: 2026-07-10
+
+After the user provided `data-agent-reproduce/repos/KramaBench-main.zip`, KramaBench was extracted and the Python environment was prepared.
+
+Commands run:
+
+```bash
+/Users/xuq/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3 -m venv data-agent-reproduce/.venvs/kramabench
+data-agent-reproduce/.venvs/kramabench/bin/python -m pip install --no-cache-dir <KramaBench dependencies from pyproject.toml>
+data-agent-reproduce/.venvs/kramabench/bin/python -m pip install --no-cache-dir untruncate-json
+data-agent-reproduce/.venvs/kramabench/bin/python -m pip install --no-cache-dir 'litellm>=1.0.0' 'anthropic>=0.7.0' 'ollama>=0.4.0' 'together>=1.0.0' 'PyPDF2>=3.0.0'
+PYTHONPATH=data-agent-reproduce/repos/KramaBench data-agent-reproduce/.venvs/kramabench/bin/python data-agent-reproduce/repos/KramaBench/evaluate.py --help
+```
+
+Smoke test 1:
+
+```bash
+OPENAI_API_KEY=dummy PYTHONPATH=. ../../.venvs/kramabench/bin/python evaluate.py --sut DummySystem --workload legal-tiny --project_root . --result_directory ../../runs/kramabench/results --no_pipeline_eval --num_workers 1 --verbose
+```
+
+Result:
+
+- Status: completed.
+- Output CSV: `data-agent-reproduce/runs/kramabench/results/DummySystem/legal-tiny_measures_20260710_091520.csv`
+- Aggregated CSV: `data-agent-reproduce/runs/kramabench/results/aggregated_results.csv`
+
+Smoke test 2:
+
+Created a 5-task Legal easy workload:
+
+```text
+data-agent-reproduce/repos/KramaBench/workload/legal-easy-5.json
+```
+
+Task IDs:
+
+```text
+legal-easy-3
+legal-easy-4
+legal-easy-5
+legal-easy-9
+legal-easy-10
+```
+
+Command:
+
+```bash
+OPENAI_API_KEY=dummy PYTHONPATH=. ../../.venvs/kramabench/bin/python evaluate.py --sut DummySystem --workload legal-easy-5 --project_root . --result_directory ../../runs/kramabench/results --no_pipeline_eval --num_workers 1
+```
+
+Result:
+
+- Status: completed.
+- Output CSV: `data-agent-reproduce/runs/kramabench/results/DummySystem/legal-easy-5_measures_20260710_091607.csv`
+- Aggregated score: 0.0, as expected for `DummySystem`.
+
+DS-GURU status:
+
+- Not run. No valid `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, or `TOGETHER_API_KEY` was configured.
+- A dummy `OPENAI_API_KEY=dummy` was used only to bypass import-time OpenAI client initialization for `DummySystem`; no model API call was made.

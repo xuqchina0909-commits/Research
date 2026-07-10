@@ -46,3 +46,34 @@ No repository checkout completed, so local checks for README, requirements, pypr
 
 The machine can authenticate to GitHub by SSH, but repository transfer and zip download from GitHub stalled or timed out during this run. No benchmark or system code was available locally, so no official install command was run and no benchmark baseline result should be claimed.
 
+## Follow-up: KramaBench Zip Install
+
+Date: 2026-07-10
+
+User downloaded KramaBench zip manually to:
+
+```text
+data-agent-reproduce/repos/KramaBench-main.zip
+```
+
+Observed:
+
+- Zip size: approximately 420 MB.
+- `unzip -t data-agent-reproduce/repos/KramaBench-main.zip` completed successfully with no compressed-data errors.
+- Existing partial Git checkout was preserved as `data-agent-reproduce/repos/KramaBench-git-partial`.
+- Zip was extracted and renamed to `data-agent-reproduce/repos/KramaBench`.
+
+KramaBench install notes:
+
+- System `python3` is Python 3.9.6, below KramaBench's `>=3.10` requirement.
+- Codex bundled Python was used instead: `/Users/xuq/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3` (`Python 3.12.13`).
+- Created virtual environment: `data-agent-reproduce/.venvs/kramabench`.
+- `pip install -e data-agent-reproduce/repos/KramaBench` failed because setuptools discovered multiple top-level packages in the flat repo layout.
+- Workaround: installed dependencies from `pyproject.toml` manually and ran from source with `PYTHONPATH=.`
+- Additional missing dependency discovered and installed: `untruncate-json`.
+- Official baseline dependencies installed: `litellm`, `anthropic`, `ollama`, `together`, `PyPDF2`.
+
+Harness status:
+
+- `evaluate.py --help` now runs successfully.
+- DS-GURU baseline was not run because `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, and `TOGETHER_API_KEY` are not configured in this environment.

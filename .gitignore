@@ -25,3 +25,6 @@ yarn-error.log*
 
 # Third-party checkouts for reproduction work
 data-agent-reproduce/repos/
+
+# Local reproduction virtual environments
+data-agent-reproduce/.venvs/

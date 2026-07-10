@@ -4,9 +4,12 @@
 
 - Stage 0 directory setup completed under `data-agent-reproduce/`.
 - Local environment has `git`, `python3`, and `pip3`; `python`, `pip`, `node`, `npm`, and Docker are missing from PATH.
-- All requested GitHub repository transfers failed due to network timeout or stalled SSH transfer.
-- KramaBench Legal baseline was not run; no benchmark score is claimed.
-- DeepAnalyze demo was not run because the repository was not available locally.
+- DeepAnalyze was later cloned successfully through SSH.
+- KramaBench was later provided as a manually downloaded zip and extracted successfully.
+- KramaBench evaluation harness now runs under a local Python 3.12 virtual environment.
+- KramaBench `DummySystem` smoke tests completed for `legal-tiny` and a 5-task `legal-easy-5` subset.
+- DS-GURU official baseline was not run because no valid model API key is configured.
+- DeepAnalyze demo was not run yet because it requires DeepAnalyze-8B/vLLM or a DeepAnalyze API key.
 - A runnable DeepAnalyze adapter scaffold was created for later single-task execution once repositories and model settings are available.
 - Result CSVs were generated with `not_evaluable` rows instead of fabricated scores.
 
@@ -14,11 +17,11 @@
 
 | Object | Intended role in this study | Current local status |
 | --- | --- | --- |
-| KramaBench | Primary small-sample end-to-end Data Agent pipeline benchmark, starting with Legal workload. | Not cloned. |
 | DAComp | Later lifecycle/data-intelligence feasibility benchmark. | Not cloned; only stage 0 clone attempted. |
-| DeepAnalyze | Primary autonomous data science agent candidate for stage 2. | Not cloned. |
+| KramaBench | Primary small-sample end-to-end Data Agent pipeline benchmark, starting with Legal workload. | Extracted from user-provided zip; harness smoke test runs. |
+| DeepAnalyze | Primary autonomous data science agent candidate for stage 2. | Cloned successfully; README/CLI/API inspected. |
 | DeepEye | Workflow-centric Data Agent candidate for later workflow-native analysis. | Not cloned; Docker also unavailable. |
-| DeepPrep | Data preparation module / paper mechanism to verify later. | Not checked in stage 0-2 because DeepAnalyze repository was unavailable. |
+| DeepPrep | Data preparation module / paper mechanism to verify later. | Mentioned in DeepAnalyze README as forthcoming companion; full runnable code not yet verified. |
 
 ## 3. Environment and Reproduction Status
 
@@ -31,7 +34,7 @@ See `logs/environment_check.md` and `logs/install_logs.md`.
 | pip | available as `pip3` | Can install Python dependencies after repositories are available. |
 | Node/npm | missing | Web UI/front-end workflows are blocked. |
 | Docker/Compose | missing | Containerized demos, especially for DeepEye, are blocked. |
-| GitHub transfer | failed | Official repositories were not locally available; stages 1 and 2 could not run benchmark/system code. |
+| GitHub transfer | partially resolved | DeepAnalyze cloned successfully; KramaBench was completed through manual zip download. |
 
 ## 4. Benchmark Adaptation Plan
 
@@ -55,16 +58,23 @@ It intentionally marks runs as `not_evaluable` when the DeepAnalyze checkout or 
 
 ## 5. KramaBench Legal Result
 
-No Legal task was run.
+Legal smoke tests were run with `DummySystem`, not with DS-GURU.
 
 CSV path:
 
 - `reports/krama_legal_results.csv`
 
-Reason:
+Output paths:
 
-- KramaBench repository could not be cloned via HTTPS, SSH, or zip download.
-- No official baseline or evaluation script was locally available.
+- `runs/kramabench/results/DummySystem/legal-tiny_measures_20260710_091520.csv`
+- `runs/kramabench/results/DummySystem/legal-easy-5_measures_20260710_091607.csv`
+- `runs/kramabench/results/aggregated_results.csv`
+
+Current interpretation:
+
+- Harness and data are usable.
+- `DummySystem` scores 0.0 as expected and is only a smoke test.
+- DS-GURU remains blocked until a valid model API key is configured.
 
 ## 6. KramaBench Environment Result
 
@@ -84,23 +94,24 @@ Completed:
 
 - Created `adapters/deepanalyze_runner.py`.
 - Adapter writes structured run artifacts even when execution is blocked.
+- DeepAnalyze repository cloned successfully.
+- README and CLI docs inspected.
+- DeepAnalyze supports CLI/API usage, but requires DeepAnalyze-8B through vLLM or DeepAnalyze API access.
 
 Blocked:
 
-- DeepAnalyze checkout unavailable.
-- Official install/demo commands could not be read locally.
-- KramaBench task schema unavailable.
-- No API key/model service was configured or verified.
+- No DeepAnalyze API key or local DeepAnalyze-8B/vLLM service is configured.
+- Node/Docker are still missing from the base environment, limiting WebUI/WebUI v2 paths.
 
 ## 8. Failure Cases
 
 | Failure type | Observed? | Evidence |
 | --- | --- | --- |
 | Repository transfer failure | yes | GitHub clone/download timed out. |
-| Installation failure | not reached | No repository checkout. |
-| Dataset preparation failure | not reached | No KramaBench scripts/data. |
-| Baseline execution failure | not reached | No runnable KramaBench code. |
-| DeepAnalyze demo failure | not reached | No DeepAnalyze checkout. |
+| Installation failure | partially | `pip install -e` failed due setuptools flat-layout discovery; dependency-only install workaround succeeded. |
+| Dataset preparation failure | no for Legal smoke | KramaBench Legal data available from zip. |
+| Baseline execution failure | blocked | DS-GURU requires model API key. |
+| DeepAnalyze demo failure | blocked | Requires DeepAnalyze-8B/vLLM or API key. |
 | Final answer extraction failure | not reached | No task execution. |
 
 ## 9. Current Capability Comparison
@@ -150,4 +161,3 @@ Key generated files:
 - `adapters/deepanalyze_runner.py`
 
 No benchmark scores were fabricated.
-
