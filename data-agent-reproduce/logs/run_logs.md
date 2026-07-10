@@ -278,3 +278,19 @@ Result:
 
 - `data-agent-reproduce/runs/kramabench/results/BaselineLLMSystemCustomOpenAIFewShot/legal-easy-1_measures_20260710_163030.csv`
 - `data-agent-reproduce/runs/kramabench/results/BaselineLLMSystemCustomOpenAIFewShot/response_cache/legal-easy-1_20260710_163045.json`
+
+## 阶段 2：DeepAnalyze API 兼容性验证
+
+日期：2026-07-10
+
+本阶段使用当前已配置的硅基流动 `Qwen/Qwen3-Coder-30B-A3B-Instruct` 作为外部模型后端，验证 DeepAnalyze 的 API、文件上传、代码执行和报告链路。该实验不等同于官方 `DeepAnalyze-8B` 复现。
+
+结果：
+
+- DeepAnalyze API 服务成功启动于 `http://127.0.0.1:8200`。
+- Legal CSV 文件上传成功。
+- 外部模型接口调用成功。
+- 原始 DeepAnalyze 内部的 `execute` 消息角色不被硅基流动接口接受，已增加兼容映射。
+- 兼容映射后，Qwen3 Coder 只返回空的 `<Analyze>`、`<Code>`、`<Answer>` 标签，没有生成真实分析代码，因此未完成端到端分析。
+
+结论：阶段 2 的服务启动和文件通路已打通，但模型协议兼容性未通过。要完成官方 DeepAnalyze 复现，需要下载并部署 `DeepAnalyze-8B`，或申请 DeepAnalyze API key。外部模型配置补丁为 `data-agent-reproduce/adapters/patch_deepanalyze_external_backend.py`。

@@ -13,6 +13,7 @@
 - SiliconFlow `Qwen/Qwen3-Coder-30B-A3B-Instruct` completed the same 1-task Legal smoke test and returned valid JSON plus executable code; the task score was still 0.0, so answer correctness remains to be improved.
 - DeepAnalyze demo was not run yet because it requires DeepAnalyze-8B/vLLM or a DeepAnalyze API key.
 - A runnable DeepAnalyze adapter scaffold was created for later single-task execution once repositories and model settings are available.
+- DeepAnalyze API stage-2 compatibility validation was started with the configured SiliconFlow Qwen3 Coder backend; file upload and service startup passed, but the model did not reliably follow DeepAnalyze's tagged execution protocol.
 - Result CSVs were generated with `not_evaluable` rows instead of fabricated scores.
 
 ## 2. Experiment Objects
@@ -100,6 +101,16 @@ Completed:
 - DeepAnalyze repository cloned successfully.
 - README and CLI docs inspected.
 - DeepAnalyze supports CLI/API usage, but requires DeepAnalyze-8B through vLLM or DeepAnalyze API access.
+
+Stage 2 compatibility validation:
+
+- DeepAnalyze API server started successfully on local port 8200.
+- The Legal CSV uploaded successfully through `/v1/files`.
+- The external SiliconFlow backend was reached successfully.
+- The server rejected the original internal `execute` role for the external OpenAI-compatible API; a local compatibility patch maps execution feedback to a user message.
+- After that patch, Qwen3 Coder returned empty `<Analyze>`, `<Code>`, and `<Answer>` tags instead of a real executable pipeline.
+
+Conclusion: the service and file-execution plumbing are partially validated, but this is not yet an official DeepAnalyze-8B reproduction. The official path still requires the DeepAnalyze-8B model or a DeepAnalyze API key. The durable configuration helper is `adapters/patch_deepanalyze_external_backend.py`.
 
 Blocked:
 
