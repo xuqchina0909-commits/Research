@@ -294,3 +294,21 @@ Result:
 - 兼容映射后，Qwen3 Coder 只返回空的 `<Analyze>`、`<Code>`、`<Answer>` 标签，没有生成真实分析代码，因此未完成端到端分析。
 
 结论：阶段 2 的服务启动和文件通路已打通，但模型协议兼容性未通过。要完成官方 DeepAnalyze 复现，需要下载并部署 `DeepAnalyze-8B`，或申请 DeepAnalyze API key。外部模型配置补丁为 `data-agent-reproduce/adapters/patch_deepanalyze_external_backend.py`。
+
+## 阶段 2：v1-external-compat 回归验证
+
+日期：2026-07-10
+
+兼容层版本：`v1-external-compat`
+
+新增能力：CSV 本地预览、禁止模拟数据的提示、Markdown/普通代码提取、无效代码自动重试，以及外部模式下跳过可选 `matplotlib` 导入。
+
+验证结果：
+
+- Qwen3 Coder 成功读取真实 CSV 文件。
+- 第一次生成代码因数据清洗逻辑不兼容而执行失败。
+- 系统自动继续请求，模型修正代码并成功执行。
+- 最终答案：`13.1628`。
+- 结论：路线一已通过最小端到端验证。
+
+版本记录：`data-agent-reproduce/adapters/deepanalyze_compat_versions.md`。路线二 `v2-tool-calling` 暂未实现。

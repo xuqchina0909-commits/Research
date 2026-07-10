@@ -110,6 +110,8 @@ Stage 2 compatibility validation:
 - The server rejected the original internal `execute` role for the external OpenAI-compatible API; a local compatibility patch maps execution feedback to a user message.
 - After that patch, Qwen3 Coder returned empty `<Analyze>`, `<Code>`, and `<Answer>` tags instead of a real executable pipeline.
 
+The `v1-external-compat` iteration added a local CSV preview, stricter anti-simulation instructions, fallback code extraction, bounded retries, and an external-mode guard for the optional matplotlib import. The same Legal task then completed successfully: the model read the real CSV, corrected one execution error, and returned `13.1628`.
+
 Conclusion: the service and file-execution plumbing are partially validated, but this is not yet an official DeepAnalyze-8B reproduction. The official path still requires the DeepAnalyze-8B model or a DeepAnalyze API key. The durable configuration helper is `adapters/patch_deepanalyze_external_backend.py`.
 
 Blocked:
