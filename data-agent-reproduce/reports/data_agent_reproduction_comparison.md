@@ -10,6 +10,7 @@
 - KramaBench `DummySystem` smoke tests completed for `legal-tiny` and a 5-task `legal-easy-5` subset.
 - DS-GURU official baseline was attempted after `OPENAI_API_KEY` was configured, but OpenAI returned `429 insufficient_quota`.
 - SiliconFlow OpenAI-compatible Qwen/Qwen2.5-7B-Instruct was connected through a local KramaBench patch; the API call completed but produced invalid/truncated JSON on the 1-task Legal smoke test.
+- SiliconFlow `Qwen/Qwen3-Coder-30B-A3B-Instruct` completed the same 1-task Legal smoke test and returned valid JSON plus executable code; the task score was still 0.0, so answer correctness remains to be improved.
 - DeepAnalyze demo was not run yet because it requires DeepAnalyze-8B/vLLM or a DeepAnalyze API key.
 - A runnable DeepAnalyze adapter scaffold was created for later single-task execution once repositories and model settings are available.
 - Result CSVs were generated with `not_evaluable` rows instead of fabricated scores.
@@ -153,6 +154,30 @@ At this point, the only defensible conclusion is about reproducibility logistics
 5. Install DeepAnalyze, run its official demo, then bind `deepanalyze_runner.py` to the confirmed CLI/API.
 
 ## 12. Appendix
+
+## 13. 最新模型验证（中文记录）
+
+本次将硅基流动模型切换为 `Qwen/Qwen3-Coder-30B-A3B-Instruct`，配置为：
+
+```text
+OPENAI_BASE_URL=https://api.siliconflow.cn/v1
+OPENAI_MODEL=Qwen/Qwen3-Coder-30B-A3B-Instruct
+```
+
+验证任务：`legal-easy-3`（通过 `legal-easy-1` 工作负载运行）。
+
+验证结果：
+
+- 接口调用成功。
+- 返回了合法 JSON。
+- 成功生成并执行了代码流程。
+- 输入 token：792；输出 token：360；总 token：1152。
+- 运行时间约 7.94 秒。
+- 当前任务得分：0.0；原因是该精简任务没有提供数据文件，并非已证明模型计算错误。
+
+与 `Qwen/Qwen2.5-7B-Instruct` 的对比：7B 模型在相同任务上输出被截断且不是合法 JSON；30B Coder 模型已经越过了格式和执行层面的阻塞。本次 0 分的直接原因是测试任务缺少数据文件，下一步应先恢复完整任务数据，再评价答案计算能力。
+
+后续实验报告统一使用中文，保留模型名、类名、路径和命令等必要的英文标识。
 
 Key generated files:
 

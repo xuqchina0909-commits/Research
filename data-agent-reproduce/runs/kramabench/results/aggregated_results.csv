@@ -32,13 +32,13 @@ DummySystem,legal-easy-5.json,token_usage_sut_output,0.0,0.0,0.0,5,5
 BaselineLLMSystemCustomOpenAIFewShot,legal-easy-1.json,mean_absolute_error,,0.0,0.0,0,1
 BaselineLLMSystemCustomOpenAIFewShot,legal-easy-1.json,mean_squared_error,,0.0,0.0,0,1
 BaselineLLMSystemCustomOpenAIFewShot,legal-easy-1.json,rae_score,0.0,0.0,0.0,1,1
-BaselineLLMSystemCustomOpenAIFewShot,legal-easy-1.json,runtime,112.00684118270874,0.0,112.00684118270874,1,1
+BaselineLLMSystemCustomOpenAIFewShot,legal-easy-1.json,runtime,7.937619924545288,0.0,7.937619924545288,1,1
 BaselineLLMSystemCustomOpenAIFewShot,legal-easy-1.json,token_usage_metrics,0.0,0.0,0.0,1,1
 BaselineLLMSystemCustomOpenAIFewShot,legal-easy-1.json,token_usage_metrics_input,0.0,0.0,0.0,1,1
 BaselineLLMSystemCustomOpenAIFewShot,legal-easy-1.json,token_usage_metrics_output,0.0,0.0,0.0,1,1
 BaselineLLMSystemCustomOpenAIFewShot,legal-easy-1.json,token_usage_subtask_eval,0.0,0.0,0.0,1,1
 BaselineLLMSystemCustomOpenAIFewShot,legal-easy-1.json,token_usage_subtask_eval_input,0.0,0.0,0.0,1,1
 BaselineLLMSystemCustomOpenAIFewShot,legal-easy-1.json,token_usage_subtask_eval_output,0.0,0.0,0.0,1,1
-BaselineLLMSystemCustomOpenAIFewShot,legal-easy-1.json,token_usage_sut,4888.0,0.0,4888.0,1,1
+BaselineLLMSystemCustomOpenAIFewShot,legal-easy-1.json,token_usage_sut,1152.0,0.0,1152.0,1,1
 BaselineLLMSystemCustomOpenAIFewShot,legal-easy-1.json,token_usage_sut_input,792.0,0.0,792.0,1,1
-BaselineLLMSystemCustomOpenAIFewShot,legal-easy-1.json,token_usage_sut_output,4096.0,0.0,4096.0,1,1
+BaselineLLMSystemCustomOpenAIFewShot,legal-easy-1.json,token_usage_sut_output,360.0,0.0,360.0,1,1

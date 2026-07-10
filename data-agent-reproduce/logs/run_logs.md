@@ -229,3 +229,27 @@ Result:
 - Runtime: 112.0068 seconds.
 - Failure reason: model output was invalid JSON and hit the 4096 output-token cap; KramaBench recorded `SUT failed to answer this question.`
 - Output CSV: `data-agent-reproduce/runs/kramabench/results/BaselineLLMSystemCustomOpenAIFewShot/legal-easy-1_measures_20260710_155154.csv`
+
+## Follow-up: SiliconFlow Qwen3 Coder 30B Attempt
+
+日期：2026-07-10
+
+模型：`Qwen/Qwen3-Coder-30B-A3B-Instruct`
+
+验证任务：`legal-easy-3`，通过 `legal-easy-1` 工作负载运行。
+
+结果：
+
+- 接口调用成功。
+- 返回合法 JSON。
+- 成功生成代码并完成执行流程。
+- 输入 token：792；输出 token：360；总 token：1152。
+- 运行时间：约 7.94 秒。
+- 最终得分：0.0；检查生成的 `answer.json` 和代码后确认，当前精简任务的 `data_sources` 为空，没有提供数据文件，因此模型返回了 `Cannot compute ratio: No data files provided`。该分数不能直接解释为模型计算错误。
+
+结论：新模型解决了 Qwen 7B 版本的输出截断和非法 JSON 问题。本次测试的主要阻塞是精简任务缺少数据文件；下一步应恢复完整 Legal 任务数据后再检查数据读取、计算逻辑和最终答案映射。
+
+输出文件：
+
+- `data-agent-reproduce/runs/kramabench/results/BaselineLLMSystemCustomOpenAIFewShot/legal-easy-1_measures_20260710_162258.csv`
+- `data-agent-reproduce/runs/kramabench/results/BaselineLLMSystemCustomOpenAIFewShot/response_cache/legal-easy-1_20260710_162306.json`
