@@ -179,6 +179,20 @@ OPENAI_MODEL=Qwen/Qwen3-Coder-30B-A3B-Instruct
 
 后续实验报告统一使用中文，保留模型名、类名、路径和命令等必要的英文标识。
 
+### 数据集目录映射修复
+
+问题原因：工作负载名为 `legal-easy-1`，旧逻辑直接寻找 `data/legal-easy-1/input`，而实际数据位于 `data/legal/input`，因此模型收到的文件列表为空。
+
+修复内容：`evaluate.py` 现在会在工作负载目录不存在时，自动回退到连字符前的基础数据集目录，例如 `legal-easy-1` 回退到 `legal`。运行时使用 `--use_truth_subset`，只加载任务声明的 CSV 文件。
+
+修复后验证：
+
+- 实际加载文件：`csn-data-book-2024-csv/CSVs/2024_CSN_Number_of_Reports_by_Type.csv`
+- 2001 年：86250
+- 2024 年：1135291
+- 正确答案：13.1628
+- KramaBench 任务得分：100.0
+
 Key generated files:
 
 - `logs/environment_check.md`

@@ -1,0 +1,44 @@
+{
+  "task_id": "legal-easy-3",
+  "model_output": {
+    "system_subtasks_responses": [],
+    "id": "main-task",
+    "query": "Give the ratio of identity theft reports in 2024 vs 2001? Round to 4 decimal places",
+    "data_sources": [
+      "csn-data-book-2024-csv/CSVs/2024_CSN_Number_of_Reports_by_Type.csv"
+    ],
+    "subtasks": [
+      {
+        "id": "subtask-1",
+        "query": "Extract the number of identity theft reports for the year 2001 from the dataset",
+        "data_sources": [
+          "csn-data-book-2024-csv/CSVs/2024_CSN_Number_of_Reports_by_Type.csv"
+        ],
+        "answer": 86250
+      },
+      {
+        "id": "subtask-2",
+        "query": "Extract the number of identity theft reports for the year 2024 from the dataset",
+        "data_sources": [
+          "csn-data-book-2024-csv/CSVs/2024_CSN_Number_of_Reports_by_Type.csv"
+        ],
+        "answer": 1135291
+      },
+      {
+        "id": "subtask-3",
+        "query": "Calculate the ratio of identity theft reports in 2024 vs 2001 and round to 4 decimal places",
+        "data_sources": [
+          "csn-data-book-2024-csv/CSVs/2024_CSN_Number_of_Reports_by_Type.csv"
+        ],
+        "answer": "Warning: No answer found in the Python pipeline."
+      }
+    ],
+    "answer": 13.1628
+  },
+  "code": "import pandas as pd\nimport json\n\n# Load the data\ndf = pd.read_csv('./data/legal/input/csn-data-book-2024-csv/CSVs/2024_CSN_Number_of_Reports_by_Type.csv')\n\n# Clean the data by removing empty rows and setting proper column names\ndf = df.dropna(how='all')\ndf.columns = ['Year', 'Fraud', 'Identity Theft', 'Other']\n\n# Extract data for 2001\ndf_2001 = df[df['Year'] == '2001']\n# Extract data for 2024\ndf_2024 = df[df['Year'] == '2024']\n\n# Get the identity theft reports for both years\nidentity_theft_2001 = int(df_2001['Identity Theft'].values[0].replace(',', ''))\nidentity_theft_2024 = int(df_2024['Identity Theft'].values[0].replace(',', ''))\n\n# Calculate ratio\nratio = identity_theft_2024 / identity_theft_2001\n\n# Print results\nprint(json.dumps({\n    \"subtask-1\": identity_theft_2001,\n    \"subtask-2\": identity_theft_2024,\n    \"main-task\": round(ratio, 4)\n}, indent=4))",
+  "token_usage_sut": 2450,
+  "token_usage_sut_input": 1812,
+  "token_usage_sut_output": 638,
+  "subresponses": [],
+  "runtime": 14.62904405593872
+}

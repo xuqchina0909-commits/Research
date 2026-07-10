@@ -37,6 +37,30 @@ def main() -> int:
     generator_utils = KRAMA / "systems" / "dsguru" / "generator_utils.py"
     baseline_utils = KRAMA / "systems" / "dsguru" / "baseline_utils.py"
     variations = KRAMA / "systems" / "dsguru" / "baseline_system_variations.py"
+    evaluate = KRAMA / "evaluate.py"
+
+    replace_once(
+        evaluate,
+        '''    else:
+        dataset_name = workload
+
+    results_df = None
+''',
+        '''    else:
+        dataset_name = workload
+        # Workload variants such as legal-easy-1 use the base dataset directory.
+        dataset_directory = os.path.join(project_root_dir, f"data/{dataset_name}/input")
+        if not os.path.isdir(dataset_directory):
+            base_dataset_name = workload.split("-", 1)[0]
+            base_dataset_directory = os.path.join(
+                project_root_dir, f"data/{base_dataset_name}/input"
+            )
+            if os.path.isdir(base_dataset_directory):
+                dataset_name = base_dataset_name
+
+    results_df = None
+''',
+    )
 
     replace_once(
         generator_utils,
@@ -143,4 +167,3 @@ class BaselineLLMSystemCustomOpenAIFewShot(BaselineLLMSystem):
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

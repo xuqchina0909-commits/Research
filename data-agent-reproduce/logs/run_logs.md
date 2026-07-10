@@ -253,3 +253,28 @@ Result:
 
 - `data-agent-reproduce/runs/kramabench/results/BaselineLLMSystemCustomOpenAIFewShot/legal-easy-1_measures_20260710_162258.csv`
 - `data-agent-reproduce/runs/kramabench/results/BaselineLLMSystemCustomOpenAIFewShot/response_cache/legal-easy-1_20260710_162306.json`
+
+## 修复：Legal 工作负载数据目录映射
+
+日期：2026-07-10
+
+问题原因：`legal-easy-1` 被错误地当作数据集目录名，程序寻找 `data/legal-easy-1/input`；实际数据目录是 `data/legal/input`，导致模型提示中的 `Data file names` 为空。
+
+修复内容：在 `evaluate.py` 中增加工作负载到基础数据集目录的自动回退逻辑；运行时增加 `--use_truth_subset`，按任务的 `data_sources` 精确加载文件。
+
+修复后结果：
+
+- 加载文件：`csn-data-book-2024-csv/CSVs/2024_CSN_Number_of_Reports_by_Type.csv`
+- 2001 年身份盗窃报告数：86250
+- 2024 年身份盗窃报告数：1135291
+- 模型答案：13.1628
+- KramaBench 得分：100.0
+- 输入 token：1812；输出 token：638；总 token：2450
+- 运行时间：约 14.63 秒
+
+结论：数据路径问题已解决，Qwen3 Coder 30B 在该最小 Legal 任务上完成了正确回答。
+
+输出文件：
+
+- `data-agent-reproduce/runs/kramabench/results/BaselineLLMSystemCustomOpenAIFewShot/legal-easy-1_measures_20260710_163030.csv`
+- `data-agent-reproduce/runs/kramabench/results/BaselineLLMSystemCustomOpenAIFewShot/response_cache/legal-easy-1_20260710_163045.json`
