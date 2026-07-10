@@ -9,6 +9,7 @@
 - KramaBench evaluation harness now runs under a local Python 3.12 virtual environment.
 - KramaBench `DummySystem` smoke tests completed for `legal-tiny` and a 5-task `legal-easy-5` subset.
 - DS-GURU official baseline was attempted after `OPENAI_API_KEY` was configured, but OpenAI returned `429 insufficient_quota`.
+- SiliconFlow OpenAI-compatible Qwen/Qwen2.5-7B-Instruct was connected through a local KramaBench patch; the API call completed but produced invalid/truncated JSON on the 1-task Legal smoke test.
 - DeepAnalyze demo was not run yet because it requires DeepAnalyze-8B/vLLM or a DeepAnalyze API key.
 - A runnable DeepAnalyze adapter scaffold was created for later single-task execution once repositories and model settings are available.
 - Result CSVs were generated with `not_evaluable` rows instead of fabricated scores.
@@ -75,6 +76,7 @@ Current interpretation:
 - Harness and data are usable.
 - `DummySystem` scores 0.0 as expected and is only a smoke test.
 - DS-GURU reached OpenAI but remains blocked until API quota/billing is available.
+- SiliconFlow Qwen 7B reached the provider successfully, but the first DS-GURU run failed answer extraction because the model output was invalid JSON and hit the output cap.
 
 ## 6. KramaBench Environment Result
 
@@ -112,6 +114,7 @@ Blocked:
 | Dataset preparation failure | no for Legal smoke | KramaBench Legal data available from zip. |
 | Baseline execution failure | blocked | DS-GURU requires model API key. |
 | OpenAI quota failure | yes | DS-GURU attempt returned `429 insufficient_quota`. |
+| OpenAI-compatible model output failure | yes | SiliconFlow Qwen 7B returned invalid/truncated JSON for `legal-easy-3`. |
 | DeepAnalyze demo failure | blocked | Requires DeepAnalyze-8B/vLLM or API key. |
 | Final answer extraction failure | not reached | No task execution. |
 

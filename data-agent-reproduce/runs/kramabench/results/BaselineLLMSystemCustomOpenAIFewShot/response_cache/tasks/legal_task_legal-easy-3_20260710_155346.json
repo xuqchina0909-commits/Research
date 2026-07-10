@@ -1,0 +1,13 @@
+{
+  "task_id": "legal-easy-3",
+  "model_output": {
+    "id": "main-task",
+    "answer": "SUT failed to answer this question."
+  },
+  "code": "",
+  "token_usage_sut": 4888,
+  "token_usage_sut_input": 792,
+  "token_usage_sut_output": 4096,
+  "subresponses": [],
+  "runtime": 112.00684118270874
+}

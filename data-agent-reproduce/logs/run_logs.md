@@ -185,3 +185,47 @@ Interpretation:
 - `OPENAI_API_KEY` is readable by KramaBench.
 - The key/account currently has no usable quota or billing capacity for this API call.
 - Once quota is fixed, run DS-GURU with the virtual environment `bin` directory prepended to `PATH` so KramaBench's subprocess call to `python` resolves correctly.
+
+## Follow-up: SiliconFlow Qwen 7B Attempt
+
+Date: 2026-07-10
+
+Configured `.env` with:
+
+```text
+OPENAI_API_KEY=<redacted>
+OPENAI_BASE_URL=https://api.siliconflow.cn/v1
+OPENAI_MODEL=Qwen/Qwen2.5-7B-Instruct
+```
+
+Local KramaBench checkout was patched to support OpenAI-compatible providers via `OPENAI_BASE_URL`. Reproducible patch script:
+
+```text
+data-agent-reproduce/adapters/patch_kramabench_openai_compatible.py
+```
+
+Command:
+
+```bash
+PATH=/Users/xuq/Documents/Research/data-agent-reproduce/.venvs/kramabench/bin:$PATH \
+PYTHONPATH=. \
+../../.venvs/kramabench/bin/python evaluate.py \
+  --sut BaselineLLMSystemCustomOpenAIFewShot \
+  --workload legal-easy-1 \
+  --project_root . \
+  --result_directory ../../runs/kramabench/results \
+  --no_pipeline_eval \
+  --num_workers 1 \
+  --verbose
+```
+
+Result:
+
+- Status: completed, but answer failed.
+- API call succeeded through SiliconFlow.
+- `token_usage_sut`: 4888
+- `token_usage_sut_input`: 792
+- `token_usage_sut_output`: 4096
+- Runtime: 112.0068 seconds.
+- Failure reason: model output was invalid JSON and hit the 4096 output-token cap; KramaBench recorded `SUT failed to answer this question.`
+- Output CSV: `data-agent-reproduce/runs/kramabench/results/BaselineLLMSystemCustomOpenAIFewShot/legal-easy-1_measures_20260710_155154.csv`
