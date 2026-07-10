@@ -134,3 +134,54 @@ DS-GURU status:
 
 - Not run. No valid `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, or `TOGETHER_API_KEY` was configured.
 - A dummy `OPENAI_API_KEY=dummy` was used only to bypass import-time OpenAI client initialization for `DummySystem`; no model API call was made.
+
+## Follow-up: DS-GURU OpenAI API Attempt
+
+Date: 2026-07-10
+
+After the user configured `OPENAI_API_KEY` in `data-agent-reproduce/repos/KramaBench/.env`, the key was detected without printing its value:
+
+```text
+OPENAI_API_KEY_set
+```
+
+Created a 1-task workload:
+
+```text
+data-agent-reproduce/repos/KramaBench/workload/legal-easy-1.json
+```
+
+Task ID:
+
+```text
+legal-easy-3
+```
+
+Command:
+
+```bash
+PYTHONPATH=. ../../.venvs/kramabench/bin/python evaluate.py --sut BaselineLLMSystemGPT4oFewShot --workload legal-easy-1 --project_root . --result_directory ../../runs/kramabench/results --no_pipeline_eval --num_workers 1 --verbose
+```
+
+Result:
+
+- Status: failed.
+- API reached OpenAI successfully, but OpenAI returned quota errors:
+
+```text
+Error code: 429
+code: insufficient_quota
+message: You exceeded your current quota, please check your plan and billing details.
+```
+
+Additional local issue discovered after the model call failed:
+
+```text
+FileNotFoundError: [Errno 2] No such file or directory: 'python'
+```
+
+Interpretation:
+
+- `OPENAI_API_KEY` is readable by KramaBench.
+- The key/account currently has no usable quota or billing capacity for this API call.
+- Once quota is fixed, run DS-GURU with the virtual environment `bin` directory prepended to `PATH` so KramaBench's subprocess call to `python` resolves correctly.
