@@ -371,3 +371,53 @@ data-agent-reproduce/repos/DeepEye
 - `playground/DABStep-Research/dabstep_research.jsonl` 存在 `Data Preparation` 类型任务，可作为未来替代验证样本。
 
 结论：DeepPrep 当前不作为完整 SUT 纳入横向评测。后续只有在完整可运行代码发布或用户提供源码后，才升级为独立系统测试。
+
+## DAComp-DA 最小数据验证
+
+日期：2026-07-10
+
+目标：不下载全量 DAComp 数据，先用一个最小 DAComp-DA 任务验证数据仓库、任务索引和本地 SQLite 数据是否可用。
+
+仓库状态：
+
+- DAComp 已通过 GitHub SSH 克隆到 `data-agent-reproduce/repos/DAComp`。
+- 当前 commit：`027ccaf`。
+- 第三方仓库位于 `repos/` 下，按项目规则忽略，不提交到 Research 主仓。
+
+最小下载：
+
+- HuggingFace 数据仓库：`DAComp/dacomp-da`。
+- 只下载文件：`dacomp-001/dacomp-001.sqlite`。
+- 本地路径：`data-agent-reproduce/repos/DAComp/dacomp-da/tasks/dacomp-001/dacomp-001.sqlite`。
+- 文件大小：164,876,288 bytes，约 157 MB。
+
+验证任务：
+
+- `dacomp-001`
+- 任务说明：基于银行收集的小微企业信用与经营数据，结合信用评级、营收能力、利润稳定性、上下游依赖和客户流失率，设计 1 亿元年度授信额度与利率分配方案。
+
+数据表检查：
+
+| Table | Rows |
+| --- | ---: |
+| `ch___company_info` | 123 |
+| `ch___input_invoices` | 210,947 |
+| `ch___sales_invoices` | 162,484 |
+| `nch___company_info` | 302 |
+| `nch___input_invoices` | 395,175 |
+| `nch___sales_invoices` | 330,835 |
+| `annual_rate_&_churn` | 29 |
+
+新增 probe：
+
+```text
+data-agent-reproduce/adapters/dacomp_minimal_probe.py
+```
+
+输出：
+
+```text
+data-agent-reproduce/runs/dacomp/minimal_probe/dacomp-001.json
+```
+
+结论：DAComp-DA 最小任务的数据层验证通过；尚未运行 DAComp 官方 baseline agent 或 LLM judge。

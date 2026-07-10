@@ -1,0 +1,353 @@
+{
+  "benchmark": "DAComp-DA",
+  "status": "success",
+  "instance_id": "dacomp-001",
+  "task": {
+    "instance_id": "dacomp-001",
+    "instruction": "Below are our bank’s collected credit and operating data for small, micro, and medium enterprises. Using existing Credit Ratings, revenue capacity, profit stability, and upstream/downstream dependency, perform a quantitative analysis of the credit risk of enterprises with credit histories.\nAssume our bank’s annual total credit is RMB 100 million. Incorporating churn rates, design an allocation plan for credit limits and interest rates, and explain in detail the rules by which the limits and rates vary with risk levels."
+  },
+  "data": {
+    "status": "available",
+    "path": "/Users/xuq/Documents/Research/data-agent-reproduce/repos/DAComp/dacomp-da/tasks/dacomp-001/dacomp-001.sqlite",
+    "size_bytes": 164876288,
+    "tables": [
+      {
+        "name": "annual_rate_&_churn",
+        "row_count": 29,
+        "columns": [
+          {
+            "name": "Annual Loan Interest Rate",
+            "type": "REAL"
+          },
+          {
+            "name": "Credit Rating A Customer Churn Rate",
+            "type": "REAL"
+          },
+          {
+            "name": "Credit Rating B Customer Churn Rate",
+            "type": "REAL"
+          },
+          {
+            "name": "Credit Rating C Customer Churn Rate",
+            "type": "REAL"
+          }
+        ],
+        "sample_rows": [
+          {
+            "Annual Loan Interest Rate": 0.04,
+            "Credit Rating A Customer Churn Rate": 0.0,
+            "Credit Rating B Customer Churn Rate": 0.0,
+            "Credit Rating C Customer Churn Rate": 0.0
+          },
+          {
+            "Annual Loan Interest Rate": 0.0425,
+            "Credit Rating A Customer Churn Rate": 0.0945741262057566,
+            "Credit Rating B Customer Churn Rate": 0.0667995833242854,
+            "Credit Rating C Customer Churn Rate": 0.0687253064883727
+          }
+        ]
+      },
+      {
+        "name": "ch___company_info",
+        "row_count": 123,
+        "columns": [
+          {
+            "name": "Enterprise Code",
+            "type": "TEXT"
+          },
+          {
+            "name": "Company Name",
+            "type": "TEXT"
+          },
+          {
+            "name": "Credit Rating",
+            "type": "TEXT"
+          },
+          {
+            "name": "Defaulted",
+            "type": "TEXT"
+          }
+        ],
+        "sample_rows": [
+          {
+            "Enterprise Code": "E1",
+            "Company Name": "*** Electrical Appliance Sales Co., Ltd.",
+            "Credit Rating": "A",
+            "Defaulted": "No"
+          },
+          {
+            "Enterprise Code": "E2",
+            "Company Name": "*** Technology Limited Liability Company",
+            "Credit Rating": "A",
+            "Defaulted": "No"
+          }
+        ]
+      },
+      {
+        "name": "ch___input_invoices",
+        "row_count": 210947,
+        "columns": [
+          {
+            "name": "Enterprise Code",
+            "type": "TEXT"
+          },
+          {
+            "name": "Invoice Number",
+            "type": "INTEGER"
+          },
+          {
+            "name": "Invoice Date",
+            "type": "TIMESTAMP"
+          },
+          {
+            "name": "Seller Organization Code",
+            "type": "TEXT"
+          },
+          {
+            "name": "Amount",
+            "type": "REAL"
+          },
+          {
+            "name": "Tax Amount",
+            "type": "REAL"
+          },
+          {
+            "name": "Amount Including Tax",
+            "type": "REAL"
+          },
+          {
+            "name": "Invoice Status",
+            "type": "TEXT"
+          }
+        ],
+        "sample_rows": [
+          {
+            "Enterprise Code": "E1",
+            "Invoice Number": 3390939,
+            "Invoice Date": "2017-07-18 00:00:00",
+            "Seller Organization Code": "A00297",
+            "Amount": -943.4,
+            "Tax Amount": -56.6,
+            "Amount Including Tax": -1000.0,
+            "Invoice Status": "Valid Invoice"
+          },
+          {
+            "Enterprise Code": "E1",
+            "Invoice Number": 3390940,
+            "Invoice Date": "2017-07-18 00:00:00",
+            "Seller Organization Code": "A00297",
+            "Amount": -4780.24,
+            "Tax Amount": -286.81,
+            "Amount Including Tax": -5067.05,
+            "Invoice Status": "Valid Invoice"
+          }
+        ]
+      },
+      {
+        "name": "ch___sales_invoices",
+        "row_count": 162484,
+        "columns": [
+          {
+            "name": "Enterprise Code",
+            "type": "TEXT"
+          },
+          {
+            "name": "Invoice Number",
+            "type": "INTEGER"
+          },
+          {
+            "name": "Invoice Date",
+            "type": "TIMESTAMP"
+          },
+          {
+            "name": "Buyer organization code",
+            "type": "TEXT"
+          },
+          {
+            "name": "Amount",
+            "type": "REAL"
+          },
+          {
+            "name": "Tax Amount",
+            "type": "REAL"
+          },
+          {
+            "name": "Amount Including Tax",
+            "type": "REAL"
+          },
+          {
+            "name": "Invoice Status",
+            "type": "TEXT"
+          }
+        ],
+        "sample_rows": [
+          {
+            "Enterprise Code": "E1",
+            "Invoice Number": 11459356,
+            "Invoice Date": "2017-08-04 00:00:00",
+            "Buyer organization code": "B03711",
+            "Amount": 9401.71,
+            "Tax Amount": 1598.29,
+            "Amount Including Tax": 11000.0,
+            "Invoice Status": "Valid Invoice"
+          },
+          {
+            "Enterprise Code": "E1",
+            "Invoice Number": 5076239,
+            "Invoice Date": "2017-08-09 00:00:00",
+            "Buyer organization code": "B00844",
+            "Amount": 8170.94,
+            "Tax Amount": 1389.06,
+            "Amount Including Tax": 9560.0,
+            "Invoice Status": "Valid Invoice"
+          }
+        ]
+      },
+      {
+        "name": "nch___company_info",
+        "row_count": 302,
+        "columns": [
+          {
+            "name": "Enterprise Code",
+            "type": "TEXT"
+          },
+          {
+            "name": "Company Name",
+            "type": "TEXT"
+          }
+        ],
+        "sample_rows": [
+          {
+            "Enterprise Code": "E124",
+            "Company Name": "Individual Business E124"
+          },
+          {
+            "Enterprise Code": "E125",
+            "Company Name": "Sole proprietorship E125"
+          }
+        ]
+      },
+      {
+        "name": "nch___input_invoices",
+        "row_count": 395175,
+        "columns": [
+          {
+            "name": "Enterprise Code",
+            "type": "TEXT"
+          },
+          {
+            "name": "Invoice Number",
+            "type": "INTEGER"
+          },
+          {
+            "name": "Invoice Date",
+            "type": "TEXT"
+          },
+          {
+            "name": "Seller Organization Code",
+            "type": "TEXT"
+          },
+          {
+            "name": "Amount",
+            "type": "REAL"
+          },
+          {
+            "name": "Tax Amount",
+            "type": "REAL"
+          },
+          {
+            "name": "Amount Including Tax",
+            "type": "REAL"
+          },
+          {
+            "name": "Invoice Status",
+            "type": "TEXT"
+          }
+        ],
+        "sample_rows": [
+          {
+            "Enterprise Code": "E125",
+            "Invoice Number": 34922128,
+            "Invoice Date": "2018/5/1",
+            "Seller Organization Code": "C02374",
+            "Amount": 172.41,
+            "Tax Amount": 27.59,
+            "Amount Including Tax": 200.0,
+            "Invoice Status": "Valid Invoice"
+          },
+          {
+            "Enterprise Code": "E125",
+            "Invoice Number": 33365900,
+            "Invoice Date": "2018/5/15",
+            "Seller Organization Code": "C02374",
+            "Amount": 172.41,
+            "Tax Amount": 27.59,
+            "Amount Including Tax": 200.0,
+            "Invoice Status": "Valid Invoice"
+          }
+        ]
+      },
+      {
+        "name": "nch___sales_invoices",
+        "row_count": 330835,
+        "columns": [
+          {
+            "name": "Enterprise Code",
+            "type": "TEXT"
+          },
+          {
+            "name": "Invoice Number",
+            "type": "INTEGER"
+          },
+          {
+            "name": "Invoice Date",
+            "type": "TIMESTAMP"
+          },
+          {
+            "name": "Buyer organization code",
+            "type": "TEXT"
+          },
+          {
+            "name": "Amount",
+            "type": "REAL"
+          },
+          {
+            "name": "Tax Amount",
+            "type": "REAL"
+          },
+          {
+            "name": "Amount Including Tax",
+            "type": "REAL"
+          },
+          {
+            "name": "Invoice Status",
+            "type": "TEXT"
+          }
+        ],
+        "sample_rows": [
+          {
+            "Enterprise Code": "E186",
+            "Invoice Number": 368424,
+            "Invoice Date": "2018-10-31 00:00:00",
+            "Buyer organization code": "D02841",
+            "Amount": 97087.38,
+            "Tax Amount": 2912.62,
+            "Amount Including Tax": 100000.0,
+            "Invoice Status": "Valid Invoice"
+          },
+          {
+            "Enterprise Code": "E186",
+            "Invoice Number": 368448,
+            "Invoice Date": "2018-10-31 00:00:00",
+            "Buyer organization code": "D02841",
+            "Amount": 97087.38,
+            "Tax Amount": 2912.62,
+            "Amount Including Tax": 100000.0,
+            "Invoice Status": "Valid Invoice"
+          }
+        ]
+      }
+    ]
+  },
+  "notes": "Data/index probe only; no model agent or LLM judge was run."
+}

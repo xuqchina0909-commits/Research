@@ -16,13 +16,14 @@
 - DeepAnalyze API stage-2 compatibility validation passed in `v1-external-compat` mode with the configured SiliconFlow Qwen3 Coder backend on one real Legal CSV task.
 - DeepEye source was cloned successfully; its Python workflow engine and backend workflow contracts passed basic local validation.
 - DeepPrep still has no locally discoverable standalone runnable module; it remains a paper/mechanism or future companion rather than a full SUT in this run.
+- DAComp was cloned successfully, and DAComp-DA `dacomp-001` was validated with its minimal SQLite dataset.
 - Result CSVs were generated with `not_evaluable` rows instead of fabricated scores.
 
 ## 2. Experiment Objects
 
 | Object | Intended role in this study | Current local status |
 | --- | --- | --- |
-| DAComp | Later lifecycle/data-intelligence feasibility benchmark. | Not cloned; only stage 0 clone attempted. |
+| DAComp | Later lifecycle/data-intelligence feasibility benchmark. | Cloned successfully; DAComp-DA `dacomp-001` minimal data validated. |
 | KramaBench | Primary small-sample end-to-end Data Agent pipeline benchmark, starting with Legal workload. | Extracted from user-provided zip; harness smoke test runs. |
 | DeepAnalyze | Primary autonomous data science agent candidate for stage 2. | Cloned successfully; README/CLI/API inspected. |
 | DeepEye | Workflow-centric Data Agent candidate for workflow-native analysis. | Cloned successfully; Python workflow engine and backend workflow contracts validated; full Docker stack not started. |
@@ -141,7 +142,7 @@ Blocked:
 | Core positioning | Workflow-centric Data Agent system with explicit DAG / node execution model. | End-to-end autonomous data science agent candidate. | Data preparation companion / paper mechanism. |
 | Runnable locally | Partially yes: Python workflow engine and contract tests pass; full Docker/WebUI stack not started. | Partially yes: API/file/code-execution flow passes under `v1-external-compat`; official DeepAnalyze-8B not deployed. | No standalone runnable module found. |
 | KramaBench adaptation | Not yet connected to KramaBench; minimal workflow adapter exists. | One Legal CSV task completed through compatible API flow. | Not attempted; not treated as full SUT. |
-| DAComp adaptation | Not attempted. | Not attempted. | Not attempted. |
+| DAComp adaptation | Data layer ready for one DA task; system adapter not connected yet. | Data layer ready for one DA task; system adapter not connected yet. | Not attempted. |
 | End-to-end analysis | Not evaluated through full product stack. | Minimal real task completed; multi-task evaluation pending. | Not a full SUT unless complete code is found. |
 | Data preparation | Not evaluated with real data-prep task yet. | Can support data-prep style tasks through DeepAnalyze flow, but not isolated here. | Primary expected role, currently unverified. |
 | Workflow controllability | Strong design signal: typed DAG, node specs, validation, execution context, artifact schema. | Lower-level execution artifacts are inspectable through local compatibility patch. | Not verified. |
@@ -166,8 +167,9 @@ At this point, the only defensible conclusion is about reproducibility logistics
 2. Re-run stage 0 repository inspection.
 3. Install KramaBench dependencies in an isolated Python environment.
 4. Select 5-10 Legal tasks and run the official baseline.
-5. After DeepEye and DeepAnalyze both have basic validation, run the same 5-10 KramaBench tasks through comparable adapters.
-6. For DeepEye, next unlock is Docker Compose or a backend-only API path that can accept file data and emit workflow artifacts.
+5. Use DAComp-DA `dacomp-001` as the first cross-system open-ended analysis sample after KramaBench single-task validation.
+6. After DeepEye and DeepAnalyze both have basic validation, run the same 5-10 KramaBench tasks through comparable adapters.
+7. For DeepEye, next unlock is Docker Compose or a backend-only API path that can accept file data and emit workflow artifacts.
 
 ## 12. Appendix
 
