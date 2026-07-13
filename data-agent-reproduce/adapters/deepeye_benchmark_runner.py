@@ -694,9 +694,16 @@ def run_dacomp(args: argparse.Namespace, client: DeepEyeClient) -> dict[str, Any
             continue
         started = time.time()
         try:
-            sqlite_path = DACOMP / "dacomp-da" / "tasks" / task_id / f"{task_id}.sqlite"
-            if not sqlite_path.exists():
-                raise FileNotFoundError(f"Missing DAComp sqlite: {sqlite_path}")
+            zh_id = task["instance_id"]
+            sqlite_candidates = [
+                DACOMP / "dacomp-da" / "tasks_zh" / zh_id / f"{zh_id}.sqlite",
+                DACOMP / "dacomp-da" / "tasks" / task_id / f"{task_id}.sqlite",
+            ]
+            sqlite_path = next((path for path in sqlite_candidates if path.exists()), None)
+            if sqlite_path is None:
+                raise FileNotFoundError(
+                    "Missing DAComp sqlite. Tried: " + ", ".join(str(path) for path in sqlite_candidates)
+                )
             container_copy, conn = dacomp_sqlite_for_container(task_id, sqlite_path)
             profile = sqlite_profile(sqlite_path)
             session_id = client.create_session(f"DAComp {task['instance_id']}")
@@ -710,7 +717,7 @@ def run_dacomp(args: argparse.Namespace, client: DeepEyeClient) -> dict[str, Any
                 before = len(messages)
                 client.start_chat(session_id, dacomp_finalize_prompt(text), [datasource_id])
                 finalized_text, messages = client.wait_for_assistant(session_id, before, min(args.timeout, 300))
-                if finalized_text:
+                if finalized_text and "No workflow run is available" not in finalized_text:
                     text = finalized_text
             failure_reason = deepeye_failure_reason(text)
             language_failure = None

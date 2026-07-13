@@ -1,0 +1,3 @@
+工作流规划已停止：Workflow execution failed at node query_region_distribution (sql.execute): (sqlite3.OperationalError) no such table: 2000年全国分年龄、性别、受教育程度的6岁及6岁以上人口（乡）
+[SQL: SELECT '城市' as region, SUM("6岁以上人口-合计") as population, SUM("未上过学-合计") as illiterate, SUM("小学-合计") as primary_school, SUM("初中-合计") as junior_high, SUM("高中-合计") as senior_high FROM "2000年全国分年龄、性别、受教育程度的6岁及6岁以上人口（城）" UNION ALL SELECT '乡村' as region, SUM("6岁以上人口-合计") as population, SUM("未上过学-合计") as illiterate, SUM("小学-合计") as primary_school, SUM("初中-合计") as junior_high, SUM("高中-合计") as senior_high FROM "2000年全国分年龄、性别、受教育程度的6岁及6岁以上人口（乡）"]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)

@@ -1,0 +1,1 @@
+工作流规划已停止：Workflow execution failed at node generate_report (report.generate): Report generation error: Report generation failed: Generated report is empty

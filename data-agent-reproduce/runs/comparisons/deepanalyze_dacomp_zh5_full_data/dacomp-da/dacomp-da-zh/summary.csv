@@ -1,0 +1,6 @@
+benchmark,system,task_id,status,judge_status,runtime_seconds,final_answer_chars,notes
+DAComp-DA,DeepAnalyze,dacomp-zh-001,completed,not_run,10.12,1271,Open-ended DAComp task; official LLM judge not run in this sample.
+DAComp-DA,DeepAnalyze,dacomp-zh-002,completed,not_run,9.973,725,Open-ended DAComp task; official LLM judge not run in this sample.
+DAComp-DA,DeepAnalyze,dacomp-zh-003,completed,not_run,4.013,466,Open-ended DAComp task; official LLM judge not run in this sample.
+DAComp-DA,DeepAnalyze,dacomp-zh-004,completed,not_run,11.423,1077,Open-ended DAComp task; official LLM judge not run in this sample.
+DAComp-DA,DeepAnalyze,dacomp-zh-005,completed,not_run,13.105,1344,Open-ended DAComp task; official LLM judge not run in this sample.

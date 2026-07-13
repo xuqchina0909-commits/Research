@@ -1,0 +1,1 @@
+ConnectionError: ('Connection aborted.', OSError(22, 'Invalid argument'))

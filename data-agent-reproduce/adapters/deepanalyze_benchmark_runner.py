@@ -238,14 +238,28 @@ def write_csv(path: Path, rows: list[dict[str, Any]]) -> None:
         writer.writerows(rows)
 
 
-def load_dacomp_task(instance_id: str) -> dict[str, Any]:
-    index = DACOMP / "dacomp-da" / "tasks" / "dacomp-da.jsonl"
-    with index.open("r", encoding="utf-8") as handle:
-        for line in handle:
-            obj = json.loads(line)
-            if obj.get("instance_id") == instance_id:
-                return obj
-    raise ValueError(f"DAComp task not found: {instance_id}")
+def load_jsonl(path: Path) -> list[dict[str, Any]]:
+    with path.open("r", encoding="utf-8") as handle:
+        return [json.loads(line) for line in handle if line.strip()]
+
+
+def dacomp_sqlite_path(instance_id: str) -> Path:
+    if instance_id.startswith("dacomp-zh-"):
+        english_id = instance_id.replace("dacomp-zh-", "dacomp-")
+        candidates = [
+            DACOMP / "dacomp-da" / "tasks_zh" / instance_id / f"{instance_id}.sqlite",
+            DACOMP / "dacomp-da" / "tasks" / english_id / f"{english_id}.sqlite",
+        ]
+    else:
+        zh_id = instance_id.replace("dacomp-", "dacomp-zh-", 1)
+        candidates = [
+            DACOMP / "dacomp-da" / "tasks" / instance_id / f"{instance_id}.sqlite",
+            DACOMP / "dacomp-da" / "tasks_zh" / zh_id / f"{zh_id}.sqlite",
+        ]
+    for candidate in candidates:
+        if candidate.exists():
+            return candidate
+    raise FileNotFoundError("Missing DAComp SQLite. Tried: " + ", ".join(str(path) for path in candidates))
 
 
 def build_sqlite_summary(sqlite_path: Path, output_path: Path, sample_rows: int = 3) -> Path:
@@ -284,45 +298,81 @@ def dacomp_prompt(task: dict[str, Any]) -> str:
     )
 
 
-def run_dacomp(args: argparse.Namespace) -> dict[str, Any]:
-    task = load_dacomp_task(args.dacomp_instance)
-    sqlite_path = DACOMP / "dacomp-da" / "tasks" / args.dacomp_instance / f"{args.dacomp_instance}.sqlite"
-    if not sqlite_path.exists():
-        raise FileNotFoundError(f"Missing DAComp SQLite: {sqlite_path}")
-    out_dir = Path(args.output) / "dacomp-da" / args.dacomp_instance
-    summary_path = build_sqlite_summary(sqlite_path, out_dir / f"{args.dacomp_instance}_schema_summary.md")
-    file_ids = [upload_file(args.api_base, sqlite_path), upload_file(args.api_base, summary_path)]
-    result = stream_chat(args.api_base, args.model, dacomp_prompt(task), file_ids, args.timeout)
-    answer = extract_answer(result["text"])
-    payload = {
+def dacomp_summary_row(payload: dict[str, Any]) -> dict[str, Any]:
+    return {
         "benchmark": "DAComp-DA",
         "system": "DeepAnalyze",
-        "task_id": args.dacomp_instance,
-        "task": task,
-        "data_sources": [str(sqlite_path), str(summary_path)],
-        "final_answer": answer,
-        "judge_status": "not_run",
-        "notes": "Open-ended DAComp task; official LLM judge not run in this sample.",
-        **result,
+        "task_id": payload.get("task_id"),
+        "status": payload.get("status", "completed"),
+        "judge_status": payload.get("judge_status", "not_run"),
+        "runtime_seconds": payload.get("runtime_seconds"),
+        "final_answer_chars": len(payload.get("final_answer") or ""),
+        "notes": payload.get("notes") or payload.get("text", "")[:200],
     }
-    write_json(out_dir / "result.json", payload)
-    (out_dir / "raw_output.txt").write_text(result["text"], encoding="utf-8")
-    write_csv(
-        Path(args.output) / "dacomp-da" / "summary.csv",
-        [
-            {
+
+
+def run_dacomp(args: argparse.Namespace) -> dict[str, Any]:
+    task_file = Path(args.dacomp_tasks)
+    tasks = load_jsonl(task_file)
+    if args.dacomp_instance != "all":
+        tasks = [task for task in tasks if task.get("instance_id") == args.dacomp_instance]
+        if not tasks:
+            raise ValueError(f"DAComp task not found: {args.dacomp_instance}")
+    if args.limit:
+        tasks = tasks[: args.limit]
+
+    out_dir = Path(args.output) / "dacomp-da" / task_file.stem
+    rows: list[dict[str, Any]] = []
+    results: list[dict[str, Any]] = []
+    for task in tasks:
+        instance_id = task["instance_id"]
+        task_dir = out_dir / instance_id
+        result_path = task_dir / "result.json"
+        if result_path.exists() and not args.overwrite:
+            payload = json.loads(result_path.read_text(encoding="utf-8"))
+            results.append(payload)
+            rows.append(dacomp_summary_row(payload))
+            continue
+
+        started = time.time()
+        try:
+            sqlite_path = dacomp_sqlite_path(instance_id)
+            summary_path = build_sqlite_summary(sqlite_path, task_dir / f"{instance_id}_schema_summary.md")
+            file_ids = [upload_file(args.api_base, sqlite_path), upload_file(args.api_base, summary_path)]
+            result = stream_chat(args.api_base, args.model, dacomp_prompt(task), file_ids, args.timeout)
+            answer = extract_answer(result["text"])
+            payload = {
                 "benchmark": "DAComp-DA",
                 "system": "DeepAnalyze",
-                "task_id": args.dacomp_instance,
+                "task_id": instance_id,
                 "status": "completed",
+                "task": task,
+                "data_sources": [str(sqlite_path), str(summary_path)],
+                "final_answer": answer,
                 "judge_status": "not_run",
-                "runtime_seconds": result["runtime_seconds"],
-                "final_answer_chars": len(answer or ""),
-                "notes": "official judge not run",
+                "notes": "Open-ended DAComp task; official LLM judge not run in this sample.",
+                **result,
             }
-        ],
-    )
-    return payload
+        except Exception as exc:
+            payload = {
+                "benchmark": "DAComp-DA",
+                "system": "DeepAnalyze",
+                "task_id": instance_id,
+                "status": "failed",
+                "task": task,
+                "data_sources": [],
+                "final_answer": None,
+                "judge_status": "not_run",
+                "notes": f"{type(exc).__name__}: {exc}",
+                "text": f"{type(exc).__name__}: {exc}",
+                "runtime_seconds": round(time.time() - started, 3),
+            }
+        write_json(result_path, payload)
+        (task_dir / "raw_output.txt").write_text(str(payload.get("text") or ""), encoding="utf-8")
+        results.append(payload)
+        rows.append(dacomp_summary_row(payload))
+        write_csv(out_dir / "summary.csv", rows)
+    return {"benchmark": "DAComp-DA", "results": results, "summary_csv": str(out_dir / "summary.csv")}
 
 
 def main() -> int:
@@ -334,6 +384,7 @@ def main() -> int:
     parser.add_argument("--suite", choices=["krama", "dacomp", "both"], default="both")
     parser.add_argument("--workload", default=str(KRAMA / "workload" / "legal-easy-5.json"))
     parser.add_argument("--limit", type=int, default=None)
+    parser.add_argument("--dacomp-tasks", default=str(DACOMP / "dacomp-da" / "tasks" / "dacomp-da.jsonl"))
     parser.add_argument("--dacomp-instance", default="dacomp-001")
     parser.add_argument("--overwrite", action="store_true")
     args = parser.parse_args()

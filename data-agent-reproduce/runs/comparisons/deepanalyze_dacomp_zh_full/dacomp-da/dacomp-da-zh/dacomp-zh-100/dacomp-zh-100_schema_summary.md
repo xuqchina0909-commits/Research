@@ -1,0 +1,402 @@
+# SQLite 数据摘要
+
+文件: `dacomp-zh-100.sqlite`
+
+
+## intercom__company_enhanced
+
+- Rows: 2509
+
+- Columns: company_id (TEXT), company_name (TEXT), website (TEXT), website_domain (TEXT), industry (TEXT), created_at (TIMESTAMP), updated_at (TIMESTAMP), user_count (INTEGER), session_count (INTEGER), monthly_spend (INTEGER), plan_id (TEXT), plan_name (TEXT), company_age_days (INTEGER), all_company_tags (TEXT)
+
+```json
+[
+  {
+    "company_id": "5f8efd11391867b82cd45b18",
+    "company_name": "Vertex Systems",
+    "website": "https://www.vertex-systems-0963.com",
+    "website_domain": "vertex-systems-0963.com",
+    "industry": "Healthcare",
+    "created_at": "2023-10-20 15:06:57",
+    "updated_at": "2023-10-20 15:58:15",
+    "user_count": 71,
+    "session_count": 1917,
+    "monthly_spend": 3749,
+    "plan_id": "scale",
+    "plan_name": "Scale",
+    "company_age_days": 163,
+    "all_company_tags": "segment=Upper Mid-Market|industry=Healthcare|contract_tier=Scale|contract_size=large|acv_usd=44988|renewal_date=2024-06-22|renewal_window=inside_90_days|feature_adoption=High (94%)|sentiment_trend=uplift|communication_cadence=Monthly Steering|success_manager=Priya Patel|playbook=Executive Alignment|education_focus=Analytics|last_value_milestone=Data Warehouse Sync Completed|health_score=79|expansion_signal=Monitor|pricing_pressure=medium|renewal_history=FY22:+9%;FY23:+11%"
+  },
+  {
+    "company_id": "5edf1e37b04cc86461109dc9",
+    "company_name": "Evergreen Partners",
+    "website": "https://www.evergreen-partners-0953.com",
+    "website_domain": "evergreen-partners-0953.com",
+    "industry": "Retail & eCommerce",
+    "created_at": "2023-06-09 05:29:27",
+    "updated_at": "2023-06-10 16:53:16",
+    "user_count": 11,
+    "session_count": 297,
+    "monthly_spend": 511,
+    "plan_id": "starter",
+    "plan_name": "Starter",
+    "company_age_days": 296,
+    "all_company_tags": "segment=SMB|industry=Retail & eCommerce|contract_tier=Starter|contract_size=small|acv_usd=6132|renewal_date=2024-01-04|renewal_window=within_30_days_past|feature_adoption=High (84%)|sentiment_trend=uplift|communication_cadence=Weekly Success Sync|success_manager=Noah Kim|playbook=Product Education Burst|education_focus=Analytics|last_value_milestone=Data Warehouse Sync Completed|health_score=79|expansion_signal=Monitor|pricing_pressure=medium|renewal_history=FY22:+4%;FY23:+6%"
+  },
+  {
+    "company_id": "5edd3c19193dde2c276c8b33",
+    "company_name": "Aurora Holdings",
+    "website": "https://www.aurora-holdings-0951.com",
+    "website_domain": "aurora-holdings-0951.com",
+    "industry": "Healthcare",
+    "created_at": "2023-06-07 19:12:25",
+    "updated_at": "2023-06-07 19:12:25",
+    "user_count": 169,
+    "session_count": 3549,
+    "monthly_spend": 3473,
+    "plan_id": "scale",
+    "plan_name": "Scale",
+    "company_age_days": 298,
+    "all_company_tags": "segment=Upper Mid-Market|industry=Healthcare|contract_tier=Scale|contract_size=large|acv_usd=41676|renewal_date=2025-05-24|renewal_window=future_90_plus|feature_adoption=Watch (58%)|sentiment_trend=stable|communication_cadence=Monthly Steering|success_manager=Priya Patel|playbook=Renewal Rescue Plan|education_focus=Onboarding|last_value_milestone=Invoice Automation Live|health_score=83|expansion_signal=Upsell Ready|pricing_pressure=low|renewal_history=FY22:+9%;FY23:+11%"
+  }
+]
+```
+
+
+## intercom__company_metrics
+
+- Rows: 2509
+
+- Columns: company_id (TEXT), company_name (TEXT), website (TEXT), industry (TEXT), plan_id (TEXT), plan_name (TEXT), total_conversations (INTEGER), total_conversations_closed (REAL), avg_conversation_parts (REAL), avg_conversation_rating (REAL), contacts_total (INTEGER), conv_rate_overall (REAL), conv_rate_email (REAL), conv_rate_messenger (REAL), conv_rate_other (REAL), contacts_active_7d (INTEGER), contacts_active_30d (INTEGER), registration_retention_7d (REAL), registration_retention_30d (REAL), p50_time_to_first_response_min (REAL), p50_time_to_first_close_min (REAL), p50_time_to_last_close_min (REAL), p50_reopens (REAL), missing_days (INTEGER), is_date_continuous (INTEGER)
+
+```json
+[
+  {
+    "company_id": "b86c565c71c442ef811368c8",
+    "company_name": "Harbor Solutions",
+    "website": "https://www.harbor-solutions-1831.com",
+    "industry": "Gaming & Media",
+    "plan_id": "scale",
+    "plan_name": "Scale",
+    "total_conversations": 147,
+    "total_conversations_closed": 145.0,
+    "avg_conversation_parts": 4.35,
+    "avg_conversation_rating": 4.45,
+    "contacts_total": 20,
+    "conv_rate_overall": 0.74,
+    "conv_rate_email": 0.259,
+    "conv_rate_messenger": 0.22570000000000004,
+    "conv_rate_other": 0.25529999999999997,
+    "contacts_active_7d": 6,
+    "contacts_active_30d": 14,
+    "registration_retention_7d": 0.79,
+    "registration_retention_30d": 0.95,
+    "p50_time_to_first_response_min": 61.0,
+    "p50_time_to_first_close_min": 296.0,
+    "p50_time_to_last_close_min": 383.0,
+    "p50_reopens": 0.13,
+    "missing_days": 0,
+    "is_date_continuous": 1
+  },
+  {
+    "company_id": "2a3682097c35479eb63f720d",
+    "company_name": "Radiant Technologies",
+    "website": "https://www.radiant-technologies-0415.com",
+    "industry": "Gaming & Media",
+    "plan_id": "scale",
+    "plan_name": "Scale",
+    "total_conversations": 163,
+    "total_conversations_closed": 161.0,
+    "avg_conversation_parts": 4.35,
+    "avg_conversation_rating": 3.85,
+    "contacts_total": 18,
+    "conv_rate_overall": 0.77,
+    "conv_rate_email": 0.2464,
+    "conv_rate_messenger": 0.26693333333333336,
+    "conv_rate_other": 0.2566666666666666,
+    "contacts_active_7d": 8,
+    "contacts_active_30d": 13,
+    "registration_retention_7d": 0.71,
+    "registration_retention_30d": 0.77,
+    "p50_time_to_first_response_min": 49.0,
+    "p50_time_to_first_close_min": 320.0,
+    "p50_time_to_last_close_min": 575.0,
+    "p50_reopens": 0.13,
+    "missing_days": 0,
+    "is_date_continuous": 1
+  },
+  {
+    "company_id": "d9884cb994334246b8440aaf",
+    "company_name": "Harbor Labs",
+    "website": "https://www.harbor-labs-2156.com",
+    "industry": "Logistics",
+    "plan_id": "enterprise",
+    "plan_name": "Enterprise",
+    "total_conversations": 102,
+    "total_conversations_closed": 100.0,
+    "avg_conversation_parts": 5.0,
+    "avg_conversation_rating": 4.45,
+    "contacts_total": 18,
+    "conv_rate_overall": 0.64,
+    "conv_rate_email": 0.22399999999999998,
+    "conv_rate_messenger": 0.19520000000000004,
+    "conv_rate_other": 0.2208,
+    "contacts_active_7d": 5,
+    "contacts_active_30d": 13,
+    "registration_retention_7d": 0.6,
+    "registration_retention_30d": 0.9199999999999999,
+    "p50_time_to_first_response_min": 90.0,
+    "p50_time_to_first_close_min": 306.0,
+    "p50_time_to_last_close_min": 468.0,
+    "p50_reopens": 0.18,
+    "missing_days": 0,
+    "is_date_continuous": 1
+  }
+]
+```
+
+
+## intercom__conversation_enhanced
+
+- Rows: 6703
+
+- Columns: conversation_id (TEXT), conversation_created_at (TIMESTAMP), conversation_last_updated_at (TIMESTAMP), conversation_type (TEXT), conversation_initiated_type (TEXT), conversation_subject (TEXT), conversation_assignee_type (TEXT), conversation_author_type (TEXT), conversation_state (TEXT), is_read (TEXT), waiting_since (TIMESTAMP), snoozed_until (TIMESTAMP), sla_name (TEXT), sla_status (TEXT), conversation_rating (REAL), conversation_remark (TEXT), first_close_at (TIMESTAMP), last_close_at (TIMESTAMP), first_admin_close_at (TIMESTAMP), last_admin_close_at (TIMESTAMP), all_conversation_tags (TEXT), all_conversation_admins (TEXT), all_conversation_contacts (TEXT), first_close_by_admin_id (TEXT), last_close_by_admin_id (TEXT), first_close_by_author_id (TEXT), last_close_by_author_id (TEXT), first_contact_author_id (TEXT), last_contact_author_id (TEXT), all_contact_company_names (TEXT)
+
+```json
+[
+  {
+    "conversation_id": "156643300001411",
+    "conversation_created_at": "2029-10-28 09:07:27",
+    "conversation_last_updated_at": "2029-10-30 12:07:27",
+    "conversation_type": "conversation",
+    "conversation_initiated_type": "admin_initiated",
+    "conversation_subject": "Sentiment recovery plan for champion",
+    "conversation_assignee_type": "team",
+    "conversation_author_type": "user",
+    "conversation_state": "snoozed",
+    "is_read": "TRUE",
+    "waiting_since": "2029-10-28 21:07:27",
+    "snoozed_until": "2029-10-29 18:07:27",
+    "sla_name": "Enterprise Renewal SLA",
+    "sla_status": "breached",
+    "conversation_rating": 3.65,
+    "conversation_remark": "Champion sentiment improving",
+    "first_close_at": "2029-10-28 20:07:27",
+    "last_close_at": "2029-10-29 19:07:27",
+    "first_admin_close_at": "2029-10-28 20:47:27",
+    "last_admin_close_at": "2029-10-29 02:22:27",
+    "all_conversation_tags": "topic=sentiment_recovery|sentiment=executive_focus|urgency=high|channel=messenger|playbook=Sentiment Turnaround|pricing_pressure=low|next_step_owner=leo_duarte",
+    "all_conversation_admins": "Success Manager: Leo Duarte | Support Specialist Liam Patel",
+    "all_conversation_contacts": "Grace Vargas (operations lead)",
+    "first_close_by_admin_id": "admin_0120",
+    "last_close_by_admin_id": "admin_0634",
+    "first_close_by_author_id": "author_00162",
+    "last_close_by_author_id": "author_00618",
+    "first_contact_author_id": "00f3fdb6b6154ab583f65df0",
+    "last_contact_author_id": "00f3fdb6b6154ab583f65df0",
+    "all_contact_company_names": "Summit Studios"
+  },
+  {
+    "conversation_id": "156643300001489",
+    "conversation_created_at": "2029-02-03 13:47:08",
+    "conversation_last_updated_at": "2029-02-06 03:47:08",
+    "conversation_type": "email",
+    "conversation_initiated_type": "auto_message",
+    "conversation_subject": "Support backlog triage before renewal",
+    "conversation_assignee_type": "team",
+    "conversation_author_type": "admin",
+    "conversation_state": "closed",
+    "is_read": "TRUE",
+    "waiting_since": "2029-02-03 14:47:08",
+    "snoozed_until": "2029-02-05 05:47:08",
+    "sla_name": "Success SLA",
+    "sla_status": "hit",
+    "conversation_rating": 4.4,
+    "conversation_remark": "Support backlog resolved; customer satisfied",
+    "first_close_at": "2029-02-04 07:47:08",
+    "last_close_at": "2029-02-04 23:47:08",
+    "first_admin_close_at": "2029-02-04 07:47:08",
+    "last_admin_close_at": "2029-02-04 08:47:08",
+    "all_conversation_tags": "topic=support_excellence|sentiment=value_build|urgency=medium|channel=messenger|playbook=Workflow Automation Boost|pricing_pressure=low|next_step_owner=iris_romano",
+    "all_conversation_admins": "Success Manager: Iris Romano | Support Specialist Ava Brooks",
+    "all_conversation_contacts": "Diego Anderson (power user)",
+    "first_close_by_admin_id": "admin_1021",
+    "last_close_by_admin_id": "admin_1641",
+    "first_close_by_author_id": "author_01381",
+    "last_close_by_author_id": "author_02261",
+    "first_contact_author_id": "05f27a5dc3954ce1b70b80ed",
+    "last_contact_author_id": "05f27a5dc3954ce1b70b80ed",
+    "all_contact_company_names": "Brightwave Group"
+  },
+  {
+    "conversation_id": "156643300001633",
+    "conversation_created_at": "2029-01-31 00:31:19",
+    "conversation_last_updated_at": "2029-02-01 20:31:19",
+    "conversation_type": "email",
+    "conversation_initiated_type": "auto_message",
+    "conversation_subject": "Integration milestone follow-up",
+    "conversation_assignee_type": "admin",
+    "conversation_author_type": "admin",
+    "conversation_state": "open",
+    "is_read": "FALSE",
+    "waiting_since": "2029-01-31 07:31:19",
+    "snoozed_until": "2029-02-01 00:31:19",
+    "sla_name": "Success SLA",
+    "sla_status": "at_risk",
+    "conversation_rating": 5.9,
+    "conversation_remark": "Integration sequencing clarified",
+    "first_close_at": "2029-02-01 12:31:19",
+    "last_close_at": "2029-02-01 22:31:19",
+    "first_admin_close_at": "2029-02-01 12:31:19",
+    "last_admin_close_at": "2029-02-01 17:01:19",
+    "all_conversation_tags": "topic=integration|sentiment=data_required|urgency=low|channel=video_call|playbook=Integration Stabilization|pricing_pressure=low|next_step_owner=sara_lindstrom",
+    "all_conversation_admins": "Success Manager: Sara Lindstrom | Technical Advisor Saanvi Rao",
+    "all_conversation_contacts": "Diego Anderson (champion)",
+    "first_close_by_admin_id": "admin_2551",
+    "last_close_by_admin_id": "admin_3351",
+    "first_close_by_author_id": "author_03451",
+    "last_close_by_author_id": "author_05051",
+    "first_contact_author_id": "0d480582cd21456a8a1febfa",
+    "last_contact_author_id": "0d480582cd21456a8a1febfa",
+    "all_contact_company_names": "Stratus Group"
+  }
+]
+```
+
+
+## intercom__conversation_metrics
+
+- Rows: 6703
+
+- Columns: conversation_id (TEXT), conversation_created_at (TIMESTAMP), conversation_last_updated_at (TIMESTAMP), conversation_type (TEXT), conversation_initiated_type (TEXT), conversation_subject (TEXT), conversation_assignee_type (TEXT), conversation_author_type (TEXT), conversation_state (TEXT), is_read (TEXT), waiting_since (TIMESTAMP), snoozed_until (TIMESTAMP), sla_name (TEXT), sla_status (TEXT), conversation_rating (REAL), conversation_rating_remark (TEXT), count_reopens (REAL), count_total_parts (INTEGER), count_assignments (REAL), first_contact_reply_at (TIMESTAMP), first_assignment_at (TIMESTAMP), time_to_first_assignment_minutes (REAL), first_admin_response_at (TIMESTAMP), time_to_first_response_minutes (REAL), time_to_admin_first_close_minutes (REAL), time_to_first_close_minutes (REAL), first_reopen_at (TIMESTAMP), last_assignment_at (TIMESTAMP), time_to_last_assignment_minutes (REAL), last_contact_reply_at (TIMESTAMP), last_admin_response_at (TIMESTAMP), last_reopen_at (TIMESTAMP), time_to_admin_last_close_minutes (REAL), time_to_last_close_minutes (REAL), first_close_by_admin_id (TEXT), last_close_by_admin_id (TEXT), first_close_by_author_id (TEXT), last_close_by_author_id (TEXT), first_contact_author_id (TEXT), last_contact_author_id (TEXT)
+
+```json
+[
+  {
+    "conversation_id": "156643300001411",
+    "conversation_created_at": "2029-10-28 09:07:27",
+    "conversation_last_updated_at": "2029-10-30 12:07:27",
+    "conversation_type": "conversation",
+    "conversation_initiated_type": "admin_initiated",
+    "conversation_subject": "Sentiment recovery plan for champion",
+    "conversation_assignee_type": "team",
+    "conversation_author_type": "user",
+    "conversation_state": "snoozed",
+    "is_read": "TRUE",
+    "waiting_since": "2029-10-28 21:07:27",
+    "snoozed_until": "2029-10-29 18:07:27",
+    "sla_name": "Enterprise Renewal SLA",
+    "sla_status": "breached",
+    "conversation_rating": 3.65,
+    "conversation_rating_remark": "Champion sentiment improving",
+    "count_reopens": 1.0,
+    "count_total_parts": 25,
+    "count_assignments": 5.0,
+    "first_contact_reply_at": "2029-10-28 09:43:27",
+    "first_assignment_at": "2029-10-28 10:02:27",
+    "time_to_first_assignment_minutes": 55.0,
+    "first_admin_response_at": "2029-10-28 10:21:27",
+    "time_to_first_response_minutes": 74.0,
+    "time_to_admin_first_close_minutes": 700.0,
+    "time_to_first_close_minutes": 660.0,
+    "first_reopen_at": "2029-10-29 02:07:27",
+    "last_assignment_at": "2029-10-28 11:49:27",
+    "time_to_last_assignment_minutes": 162.0,
+    "last_contact_reply_at": "2029-10-28 12:14:27",
+    "last_admin_response_at": "2029-10-28 13:05:27",
+    "last_reopen_at": "2029-10-29 20:07:27",
+    "time_to_admin_last_close_minutes": 1035.0,
+    "time_to_last_close_minutes": 2040.0,
+    "first_close_by_admin_id": "admin_0120",
+    "last_close_by_admin_id": "admin_0634",
+    "first_close_by_author_id": "author_00162",
+    "last_close_by_author_id": "author_00618",
+    "first_contact_author_id": "00f3fdb6b6154ab583f65df0",
+    "last_contact_author_id": "00f3fdb6b6154ab583f65df0"
+  },
+  {
+    "conversation_id": "156643300001423",
+    "conversation_created_at": "2029-07-02 03:03:33",
+    "conversation_last_updated_at": "2029-07-03 21:03:33",
+    "conversation_type": "conversation",
+    "conversation_initiated_type": "customer_initiated",
+    "conversation_subject": "Feature rollout enablement session recap",
+    "conversation_assignee_type": "team",
+    "conversation_author_type": "user",
+    "conversation_state": "closed",
+    "is_read": "TRUE",
+    "waiting_since": "2029-07-02 12:03:33",
+    "snoozed_until": "2029-07-04 19:03:33",
+    "sla_name": "Enterprise Renewal SLA",
+    "sla_status": "hit",
+    "conversation_rating": 3.4,
+    "conversation_rating_remark": "Feature launch executed with strong adoption",
+    "count_reopens": 1.0,
+    "count_total_parts": 16,
+    "count_assignments": 3.0,
+    "first_contact_reply_at": "2029-07-02 04:06:33",
+    "first_assignment_at": "2029-07-02 04:43:33",
+    "time_to_first_assignment_minutes": 100.0,
+    "first_admin_response_at": "2029-07-02 05:20:33",
+    "time_to_first_response_minutes": 137.0,
+    "time_to_admin_first_close_minutes": 2300.0,
+    "time_to_first_close_minutes": 2280.0,
+    "first_reopen_at": "2029-07-03 20:03:33",
+    "last_assignment_at": "2029-07-02 08:09:33",
+    "time_to_last_assignment_minutes": 306.0,
+    "last_contact_reply_at": "2029-07-02 08:34:33",
+    "last_admin_response_at": "2029-07-02 10:37:33",
+    "last_reopen_at": "2029-07-04 15:33:33",
+    "time_to_admin_last_close_minutes": 2340.0,
+    "time_to_last_close_minutes": 3480.0,
+    "first_close_by_admin_id": "admin_0273",
+    "last_close_by_admin_id": "admin_0805",
+    "first_close_by_author_id": "author_00369",
+    "last_close_by_author_id": "author_00897",
+    "first_contact_author_id": "01e096da127b49eb83cd7dde",
+    "last_contact_author_id": "01e096da127b49eb83cd7dde"
+  },
+  {
+    "conversation_id": "156643300001489",
+    "conversation_created_at": "2029-02-03 13:47:08",
+    "conversation_last_updated_at": "2029-02-06 03:47:08",
+    "conversation_type": "email",
+    "conversation_initiated_type": "auto_message",
+    "conversation_subject": "Support backlog triage before renewal",
+    "conversation_assignee_type": "team",
+    "conversation_author_type": "admin",
+    "conversation_state": "closed",
+    "is_read": "TRUE",
+    "waiting_since": "2029-02-03 14:47:08",
+    "snoozed_until": "2029-02-05 05:47:08",
+    "sla_name": "Success SLA",
+    "sla_status": "hit",
+    "conversation_rating": 4.4,
+    "conversation_rating_remark": "Support backlog resolved; customer satisfied",
+    "count_reopens": 0.0,
+    "count_total_parts": 20,
+    "count_assignments": 1.0,
+    "first_contact_reply_at": "2029-02-03 14:32:08",
+    "first_assignment_at": "2029-02-03 16:07:08",
+    "time_to_first_assignment_minutes": 140.0,
+    "first_admin_response_at": "2029-02-03 17:32:08",
+    "time_to_first_response_minutes": 225.0,
+    "time_to_admin_first_close_minutes": 1080.0,
+    "time_to_first_close_minutes": 1080.0,
+    "first_reopen_at": "2029-02-05 00:17:08",
+    "last_assignment_at": "2029-02-03 19:37:08",
+    "time_to_last_assignment_minutes": 350.0,
+    "last_contact_reply_at": "2029-02-03 16:32:08",
+    "last_admin_response_at": "2029-02-03 20:17:08",
+    "last_reopen_at": "2029-02-05 00:32:08",
+    "time_to_admin_last_close_minutes": 1140.0,
+    "time_to_last_close_minutes": 2040.0,
+    "first_close_by_admin_id": "admin_1021",
+    "last_close_by_admin_id": "admin_1641",
+    "first_close_by_author_id": "author_01381",
+    "last_close_by_author_id": "author_02261",
+    "first_contact_author_id": "05f27a5dc3954ce1b70b80ed",
+    "last_contact_author_id": "05f27a5dc3954ce1b70b80ed"
+  }
+]
+```

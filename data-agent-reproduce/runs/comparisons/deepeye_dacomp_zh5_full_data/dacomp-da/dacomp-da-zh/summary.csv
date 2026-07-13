@@ -1,0 +1,6 @@
+benchmark,system,task_id,status,correct,expected_answer,final_answer,runtime_seconds,text_chars
+DAComp-DA,DeepEye,dacomp-zh-001,failed,,,,65.245,46
+DAComp-DA,DeepEye,dacomp-zh-002,completed,,,,30.088,73
+DAComp-DA,DeepEye,dacomp-zh-003,completed,,,,35.122,394
+DAComp-DA,DeepEye,dacomp-zh-004,completed,,,,55.169,759
+DAComp-DA,DeepEye,dacomp-zh-005,failed,,,,70.168,46

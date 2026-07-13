@@ -1,0 +1,3 @@
+工作流规划已停止：Workflow execution failed at node query_data (sql.execute): (sqlite3.OperationalError) no such column: 利润
+[SQL: SELECT '物流总收入' AS '指标', SUM(物流总收入) AS '数值' UNION ALL SELECT '物流总成本' AS '指标', SUM(物流总成本) AS '数值' UNION ALL SELECT '利润' AS '指标', SUM(利润) AS '数值' UNION ALL SELECT '利润率' AS '指标', ROUND(SUM(利润) * 100.0 / SUM(物流总收入), 2) AS '数值']
+(Background on this error at: https://sqlalche.me/e/20/e3q8)

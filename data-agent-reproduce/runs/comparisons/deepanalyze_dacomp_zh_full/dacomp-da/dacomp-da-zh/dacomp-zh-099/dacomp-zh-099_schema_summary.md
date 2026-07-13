@@ -1,0 +1,402 @@
+# SQLite 数据摘要
+
+文件: `dacomp-zh-099.sqlite`
+
+
+## intercom__company_enhanced
+
+- Rows: 2509
+
+- Columns: company_id (TEXT), company_name (TEXT), website (TEXT), website_domain (TEXT), industry (TEXT), created_at (TIMESTAMP), updated_at (TIMESTAMP), user_count (INTEGER), session_count (INTEGER), monthly_spend (INTEGER), plan_id (TEXT), plan_name (TEXT), company_age_days (INTEGER), all_company_tags (TEXT)
+
+```json
+[
+  {
+    "company_id": "5f8efd11391867b82cd45b18",
+    "company_name": "Velocity Labs",
+    "website": "https://velocity-labs.com",
+    "website_domain": "velocity-labs.com",
+    "industry": "Biotech",
+    "created_at": "2021-06-10 05:49:51",
+    "updated_at": "2022-04-29 06:34:54",
+    "user_count": 275,
+    "session_count": 1762,
+    "monthly_spend": 1062,
+    "plan_id": "pln_growth",
+    "plan_name": "Growth",
+    "company_age_days": 323,
+    "all_company_tags": "Support Intensive, Churn Watch, New Customer"
+  },
+  {
+    "company_id": "5edf1e37b04cc86461109dc9",
+    "company_name": "Pioneer Group",
+    "website": "https://pioneer-group.com",
+    "website_domain": "pioneer-group.com",
+    "industry": "Consumer Goods",
+    "created_at": "2019-06-07 07:42:37",
+    "updated_at": "2019-12-28 08:05:41",
+    "user_count": 148,
+    "session_count": 1125,
+    "monthly_spend": 1403,
+    "plan_id": "pln_growth",
+    "plan_name": "Growth",
+    "company_age_days": 204,
+    "all_company_tags": "Beta Tester, Usage Spike, New Customer"
+  },
+  {
+    "company_id": "5edd3c19193dde2c276c8b33",
+    "company_name": "Cobalt Platforms",
+    "website": "https://cobalt-platforms.com",
+    "website_domain": "cobalt-platforms.com",
+    "industry": "Travel",
+    "created_at": "2022-12-08 01:27:17",
+    "updated_at": "2024-10-27 01:34:26",
+    "user_count": 1536,
+    "session_count": 23118,
+    "monthly_spend": 7833,
+    "plan_id": "pln_enterprise",
+    "plan_name": "Enterprise",
+    "company_age_days": 689,
+    "all_company_tags": "Expansion Target, Executive Sponsor, Beta Tester"
+  }
+]
+```
+
+
+## intercom__company_metrics
+
+- Rows: 2509
+
+- Columns: company_id (TEXT), company_name (TEXT), website (TEXT), industry (TEXT), plan_id (TEXT), plan_name (TEXT), total_conversations (INTEGER), total_conversations_closed (REAL), avg_conversation_parts (REAL), avg_conversation_rating (REAL), contacts_total (INTEGER), conv_rate_overall (REAL), conv_rate_email (REAL), conv_rate_messenger (REAL), conv_rate_other (REAL), contacts_active_7d (INTEGER), contacts_active_30d (INTEGER), registration_retention_7d (REAL), registration_retention_30d (REAL), p50_time_to_first_response_min (REAL), p50_time_to_first_close_min (REAL), p50_time_to_last_close_min (REAL), p50_reopens (REAL), missing_days (INTEGER), is_date_continuous (INTEGER)
+
+```json
+[
+  {
+    "company_id": "5f8efd11391867b82cd45b18",
+    "company_name": "Velocity Labs",
+    "website": "https://velocity-labs.com",
+    "industry": "Biotech",
+    "plan_id": "pln_growth",
+    "plan_name": "Growth",
+    "total_conversations": 77,
+    "total_conversations_closed": 63.0,
+    "avg_conversation_parts": 6.9,
+    "avg_conversation_rating": 3.4,
+    "contacts_total": 84,
+    "conv_rate_overall": 0.7,
+    "conv_rate_email": 0.27391304347826084,
+    "conv_rate_messenger": 0.18869565217391304,
+    "conv_rate_other": 0.2373913043478261,
+    "contacts_active_7d": 46,
+    "contacts_active_30d": 79,
+    "registration_retention_7d": 0.49,
+    "registration_retention_30d": 0.58,
+    "p50_time_to_first_response_min": 109.0,
+    "p50_time_to_first_close_min": 213.0,
+    "p50_time_to_last_close_min": 411.0,
+    "p50_reopens": 1.0,
+    "missing_days": 4,
+    "is_date_continuous": 0
+  },
+  {
+    "company_id": "5edf1e37b04cc86461109dc9",
+    "company_name": "Pioneer Group",
+    "website": "https://pioneer-group.com",
+    "industry": "Consumer Goods",
+    "plan_id": "pln_growth",
+    "plan_name": "Growth",
+    "total_conversations": 53,
+    "total_conversations_closed": 41.0,
+    "avg_conversation_parts": 4.4,
+    "avg_conversation_rating": 3.7,
+    "contacts_total": 59,
+    "conv_rate_overall": 0.74,
+    "conv_rate_email": 0.2877777777777778,
+    "conv_rate_messenger": 0.2004166666666667,
+    "conv_rate_other": 0.25180555555555556,
+    "contacts_active_7d": 43,
+    "contacts_active_30d": 59,
+    "registration_retention_7d": 0.6,
+    "registration_retention_30d": 0.77,
+    "p50_time_to_first_response_min": 18.0,
+    "p50_time_to_first_close_min": 216.0,
+    "p50_time_to_last_close_min": 370.0,
+    "p50_reopens": 1.0,
+    "missing_days": 2,
+    "is_date_continuous": 0
+  },
+  {
+    "company_id": "5edd3c19193dde2c276c8b33",
+    "company_name": "Cobalt Platforms",
+    "website": "https://cobalt-platforms.com",
+    "industry": "Travel",
+    "plan_id": "pln_enterprise",
+    "plan_name": "Enterprise",
+    "total_conversations": 275,
+    "total_conversations_closed": 201.0,
+    "avg_conversation_parts": 7.6,
+    "avg_conversation_rating": 5.1,
+    "contacts_total": 99,
+    "conv_rate_overall": 0.39,
+    "conv_rate_email": 0.1618867924528302,
+    "conv_rate_messenger": 0.14716981132075474,
+    "conv_rate_other": 0.0809433962264151,
+    "contacts_active_7d": 58,
+    "contacts_active_30d": 94,
+    "registration_retention_7d": 0.76,
+    "registration_retention_30d": 0.81,
+    "p50_time_to_first_response_min": 116.0,
+    "p50_time_to_first_close_min": 172.0,
+    "p50_time_to_last_close_min": 392.0,
+    "p50_reopens": 0.9,
+    "missing_days": 4,
+    "is_date_continuous": 0
+  }
+]
+```
+
+
+## intercom__conversation_enhanced
+
+- Rows: 6703
+
+- Columns: conversation_id (TEXT), conversation_created_at (TIMESTAMP), conversation_last_updated_at (TIMESTAMP), conversation_type (TEXT), conversation_initiated_type (TEXT), conversation_subject (TEXT), conversation_assignee_type (TEXT), conversation_author_type (TEXT), conversation_state (TEXT), is_read (TEXT), waiting_since (TIMESTAMP), snoozed_until (TIMESTAMP), sla_name (TEXT), sla_status (TEXT), conversation_rating (REAL), conversation_remark (TEXT), first_close_at (TIMESTAMP), last_close_at (TIMESTAMP), first_admin_close_at (TIMESTAMP), last_admin_close_at (TIMESTAMP), all_conversation_tags (TEXT), all_conversation_admins (TEXT), all_conversation_contacts (TEXT), first_close_by_admin_id (TEXT), last_close_by_admin_id (TEXT), first_close_by_author_id (TEXT), last_close_by_author_id (TEXT), first_contact_author_id (TEXT), last_contact_author_id (TEXT), all_contact_company_names (TEXT)
+
+```json
+[
+  {
+    "conversation_id": "156643300001803",
+    "conversation_created_at": "2023-08-02 21:52:58",
+    "conversation_last_updated_at": "2023-08-03 13:50:58",
+    "conversation_type": "conversation",
+    "conversation_initiated_type": "customer_initiated",
+    "conversation_subject": "Implementation blocker - Analytics Dashboard",
+    "conversation_assignee_type": "team",
+    "conversation_author_type": "user",
+    "conversation_state": "closed",
+    "is_read": "true",
+    "waiting_since": "2023-08-02 23:59:58",
+    "snoozed_until": "2023-08-03 12:33:58",
+    "sla_name": "Standard SLA",
+    "sla_status": "breached",
+    "conversation_rating": 4.2,
+    "conversation_remark": "Scheduling executive review",
+    "first_close_at": "2023-08-03 10:26:58",
+    "last_close_at": "2023-08-03 12:48:58",
+    "first_admin_close_at": "2023-08-03 10:26:58",
+    "last_admin_close_at": "2023-08-03 12:48:58",
+    "all_conversation_tags": "Mobile, Renewal, Executive Attention",
+    "all_conversation_admins": "admin_264, admin_540.0",
+    "all_conversation_contacts": "03d0fbc6dc6d4ec796f37b66",
+    "first_close_by_admin_id": "admin_264",
+    "last_close_by_admin_id": "admin_540.0",
+    "first_close_by_author_id": "admin_264",
+    "last_close_by_author_id": "admin_540.0",
+    "first_contact_author_id": "03d0fbc6dc6d4ec796f37b66",
+    "last_contact_author_id": "03d0fbc6dc6d4ec796f37b66",
+    "all_contact_company_names": "Edge Platforms"
+  },
+  {
+    "conversation_id": "156643300001827",
+    "conversation_created_at": "2022-09-18 13:55:19",
+    "conversation_last_updated_at": "2022-09-18 21:59:19",
+    "conversation_type": "conversation",
+    "conversation_initiated_type": "customer_initiated",
+    "conversation_subject": "Reporting accuracy - Permission Management",
+    "conversation_assignee_type": "admin",
+    "conversation_author_type": "user",
+    "conversation_state": "closed",
+    "is_read": "false",
+    "waiting_since": "2022-09-18 14:37:19",
+    "snoozed_until": "2022-09-18 20:42:19",
+    "sla_name": "Priority SLA",
+    "sla_status": "warning",
+    "conversation_rating": 4.5,
+    "conversation_remark": "Further enablement needed",
+    "first_close_at": "2022-09-18 17:35:19",
+    "last_close_at": "2022-09-18 20:57:19",
+    "first_admin_close_at": "2022-09-18 17:35:19",
+    "last_admin_close_at": "2022-09-18 20:57:19",
+    "all_conversation_tags": "Billing, Feature Feedback, Executive Attention",
+    "all_conversation_admins": "admin_118",
+    "all_conversation_contacts": "0a7c08d93c00467185ba7215",
+    "first_close_by_admin_id": "admin_118",
+    "last_close_by_admin_id": "admin_118",
+    "first_close_by_author_id": "admin_118",
+    "last_close_by_author_id": "admin_118",
+    "first_contact_author_id": "0a7c08d93c00467185ba7215",
+    "last_contact_author_id": "0a7c08d93c00467185ba7215",
+    "all_contact_company_names": "Global Technologies"
+  },
+  {
+    "conversation_id": "156643300001925",
+    "conversation_created_at": "2021-07-07 21:06:19",
+    "conversation_last_updated_at": "2021-07-08 11:51:19",
+    "conversation_type": "conversation",
+    "conversation_initiated_type": "team_initiated",
+    "conversation_subject": "Mobile app crash - Compliance Toolkit",
+    "conversation_assignee_type": "admin",
+    "conversation_author_type": "user",
+    "conversation_state": "closed",
+    "is_read": "false",
+    "waiting_since": "2021-07-08 00:55:19",
+    "snoozed_until": "2021-07-08 11:04:19",
+    "sla_name": "Standard SLA",
+    "sla_status": "breached",
+    "conversation_rating": 4.4,
+    "conversation_remark": "Workaround shared and accepted",
+    "first_close_at": "2021-07-08 10:57:19",
+    "last_close_at": "2021-07-08 11:19:19",
+    "first_admin_close_at": "2021-07-08 10:57:19",
+    "last_admin_close_at": "2021-07-08 11:19:19",
+    "all_conversation_tags": "Executive Attention, Security, Upgrade Opportunity",
+    "all_conversation_admins": "admin_248, admin_220.0",
+    "all_conversation_contacts": "02c7821446464cf9ac777c35",
+    "first_close_by_admin_id": "admin_248",
+    "last_close_by_admin_id": "admin_248",
+    "first_close_by_author_id": "admin_248",
+    "last_close_by_author_id": "admin_248",
+    "first_contact_author_id": "02c7821446464cf9ac777c35",
+    "last_contact_author_id": "02c7821446464cf9ac777c35",
+    "all_contact_company_names": "Zenith Associates"
+  }
+]
+```
+
+
+## intercom__conversation_metrics
+
+- Rows: 6703
+
+- Columns: conversation_id (TEXT), conversation_created_at (TIMESTAMP), conversation_last_updated_at (TIMESTAMP), conversation_type (TEXT), conversation_initiated_type (TEXT), conversation_subject (TEXT), conversation_assignee_type (TEXT), conversation_author_type (TEXT), conversation_state (TEXT), is_read (TEXT), waiting_since (TIMESTAMP), snoozed_until (TIMESTAMP), sla_name (TEXT), sla_status (TEXT), conversation_rating (REAL), conversation_rating_remark (TEXT), count_reopens (REAL), count_total_parts (INTEGER), count_assignments (REAL), first_contact_reply_at (TIMESTAMP), first_assignment_at (TIMESTAMP), time_to_first_assignment_minutes (REAL), first_admin_response_at (TIMESTAMP), time_to_first_response_minutes (REAL), time_to_admin_first_close_minutes (REAL), time_to_first_close_minutes (REAL), first_reopen_at (TIMESTAMP), last_assignment_at (TIMESTAMP), time_to_last_assignment_minutes (REAL), last_contact_reply_at (TIMESTAMP), last_admin_response_at (TIMESTAMP), last_reopen_at (TIMESTAMP), time_to_admin_last_close_minutes (REAL), time_to_last_close_minutes (REAL), first_close_by_admin_id (TEXT), last_close_by_admin_id (TEXT), first_close_by_author_id (TEXT), last_close_by_author_id (TEXT), first_contact_author_id (TEXT), last_contact_author_id (TEXT)
+
+```json
+[
+  {
+    "conversation_id": "156643300001803",
+    "conversation_created_at": "2023-08-02 21:52:58",
+    "conversation_last_updated_at": "2023-08-03 13:50:58",
+    "conversation_type": "conversation",
+    "conversation_initiated_type": "customer_initiated",
+    "conversation_subject": "Implementation blocker - Analytics Dashboard",
+    "conversation_assignee_type": "team",
+    "conversation_author_type": "user",
+    "conversation_state": "closed",
+    "is_read": "true",
+    "waiting_since": "2023-08-02 23:59:58",
+    "snoozed_until": "2023-08-03 12:33:58",
+    "sla_name": "Standard SLA",
+    "sla_status": "breached",
+    "conversation_rating": 4.2,
+    "conversation_rating_remark": "Scheduling executive review",
+    "count_reopens": 2.0,
+    "count_total_parts": 15,
+    "count_assignments": 4.0,
+    "first_contact_reply_at": "2023-08-02 22:56:28",
+    "first_assignment_at": "2023-08-02 23:53:58",
+    "time_to_first_assignment_minutes": 121.0,
+    "first_admin_response_at": "2023-08-02 23:59:58",
+    "time_to_first_response_minutes": 127.0,
+    "time_to_admin_first_close_minutes": 754.0,
+    "time_to_first_close_minutes": 754.0,
+    "first_reopen_at": "2023-08-03 10:56:58",
+    "last_assignment_at": "2023-08-03 00:31:58",
+    "time_to_last_assignment_minutes": 159.0,
+    "last_contact_reply_at": "2023-08-03 01:16:28",
+    "last_admin_response_at": "2023-08-03 12:33:58",
+    "last_reopen_at": "2023-08-03 12:28:58",
+    "time_to_admin_last_close_minutes": 896.0,
+    "time_to_last_close_minutes": 896.0,
+    "first_close_by_admin_id": "admin_264",
+    "last_close_by_admin_id": "admin_540.0",
+    "first_close_by_author_id": "admin_264",
+    "last_close_by_author_id": "admin_540.0",
+    "first_contact_author_id": "03d0fbc6dc6d4ec796f37b66",
+    "last_contact_author_id": "03d0fbc6dc6d4ec796f37b66"
+  },
+  {
+    "conversation_id": "156643300001827",
+    "conversation_created_at": "2022-09-18 13:55:19",
+    "conversation_last_updated_at": "2022-09-18 21:59:19",
+    "conversation_type": "conversation",
+    "conversation_initiated_type": "customer_initiated",
+    "conversation_subject": "Reporting accuracy - Permission Management",
+    "conversation_assignee_type": "admin",
+    "conversation_author_type": "user",
+    "conversation_state": "closed",
+    "is_read": "false",
+    "waiting_since": "2022-09-18 14:37:19",
+    "snoozed_until": "2022-09-18 20:42:19",
+    "sla_name": "Priority SLA",
+    "sla_status": "warning",
+    "conversation_rating": 4.5,
+    "conversation_rating_remark": "Further enablement needed",
+    "count_reopens": 2.0,
+    "count_total_parts": 24,
+    "count_assignments": 1.0,
+    "first_contact_reply_at": "2022-09-18 14:16:19",
+    "first_assignment_at": "2022-09-18 14:31:19",
+    "time_to_first_assignment_minutes": 36.0,
+    "first_admin_response_at": "2022-09-18 14:37:19",
+    "time_to_first_response_minutes": 42.0,
+    "time_to_admin_first_close_minutes": 220.0,
+    "time_to_first_close_minutes": 220.0,
+    "first_reopen_at": "2022-09-18 18:05:19",
+    "last_assignment_at": "2022-09-18 15:00:19",
+    "time_to_last_assignment_minutes": 65.0,
+    "last_contact_reply_at": "2022-09-18 15:41:19",
+    "last_admin_response_at": "2022-09-18 20:42:19",
+    "last_reopen_at": "2022-09-18 20:37:19",
+    "time_to_admin_last_close_minutes": 422.0,
+    "time_to_last_close_minutes": 422.0,
+    "first_close_by_admin_id": "admin_118",
+    "last_close_by_admin_id": "admin_118",
+    "first_close_by_author_id": "admin_118",
+    "last_close_by_author_id": "admin_118",
+    "first_contact_author_id": "0a7c08d93c00467185ba7215",
+    "last_contact_author_id": "0a7c08d93c00467185ba7215"
+  },
+  {
+    "conversation_id": "156643300001925",
+    "conversation_created_at": "2021-07-07 21:06:19",
+    "conversation_last_updated_at": "2021-07-08 11:51:19",
+    "conversation_type": "conversation",
+    "conversation_initiated_type": "team_initiated",
+    "conversation_subject": "Mobile app crash - Compliance Toolkit",
+    "conversation_assignee_type": "admin",
+    "conversation_author_type": "user",
+    "conversation_state": "closed",
+    "is_read": "false",
+    "waiting_since": "2021-07-08 00:55:19",
+    "snoozed_until": "2021-07-08 11:04:19",
+    "sla_name": "Standard SLA",
+    "sla_status": "breached",
+    "conversation_rating": 4.4,
+    "conversation_rating_remark": "Workaround shared and accepted",
+    "count_reopens": 0.0,
+    "count_total_parts": 12,
+    "count_assignments": 3.0,
+    "first_contact_reply_at": "2021-07-07 23:00:49",
+    "first_assignment_at": "2021-07-08 00:49:19",
+    "time_to_first_assignment_minutes": 223.0,
+    "first_admin_response_at": "2021-07-08 00:55:19",
+    "time_to_first_response_minutes": 229.0,
+    "time_to_admin_first_close_minutes": 831.0,
+    "time_to_first_close_minutes": 831.0,
+    "first_reopen_at": "2021-07-07 21:06:19",
+    "last_assignment_at": "2021-07-08 01:23:19",
+    "time_to_last_assignment_minutes": 257.0,
+    "last_contact_reply_at": "2021-07-08 00:48:49",
+    "last_admin_response_at": "2021-07-08 11:04:19",
+    "last_reopen_at": "2021-07-07 21:06:19",
+    "time_to_admin_last_close_minutes": 853.0,
+    "time_to_last_close_minutes": 853.0,
+    "first_close_by_admin_id": "admin_248",
+    "last_close_by_admin_id": "admin_248",
+    "first_close_by_author_id": "admin_248",
+    "last_close_by_author_id": "admin_248",
+    "first_contact_author_id": "02c7821446464cf9ac777c35",
+    "last_contact_author_id": "02c7821446464cf9ac777c35"
+  }
+]
+```
