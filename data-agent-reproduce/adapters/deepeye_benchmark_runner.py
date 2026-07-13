@@ -76,6 +76,28 @@ def score_numeric(prediction: str | None, expected: Any) -> dict[str, Any]:
     }
 
 
+def score_exact_list(prediction: str | None, expected: Any) -> dict[str, Any]:
+    if not isinstance(expected, list):
+        return {"correct": None, "reason": "expected answer is not a list"}
+    if not prediction:
+        return {"correct": False, "predicted_list": None, "expected_list": expected, "reason": "no answer"}
+    predicted_numbers = [int(item) for item in re.findall(r"-?\d+", prediction)]
+    return {
+        "correct": predicted_numbers == expected,
+        "predicted_list": predicted_numbers,
+        "expected_list": expected,
+    }
+
+
+def score_krama_answer(prediction: str | None, task: dict[str, Any]) -> dict[str, Any]:
+    answer_type = str(task.get("answer_type", ""))
+    if answer_type.startswith("numeric"):
+        return score_numeric(prediction, task.get("answer"))
+    if answer_type.startswith("list"):
+        return score_exact_list(prediction, task.get("answer"))
+    return {"correct": None, "reason": f"scoring not implemented for {answer_type}"}
+
+
 def deepeye_failure_reason(text: str | None) -> str | None:
     if not text:
         return None
@@ -83,6 +105,7 @@ def deepeye_failure_reason(text: str | None) -> str | None:
         "工作流规划在自动修复两次后仍未收敛",
         "工作流规划已停止",
         "工作流规划未收敛",
+        "Workflow planning did not converge",
         "Workflow execution failed",
         "Workflow repair limit exceeded",
         "repair limit exceeded",
@@ -101,6 +124,70 @@ def cjk_ratio(text: str | None) -> float:
         return 0.0
     cjk = [char for char in non_space if "\u4e00" <= char <= "\u9fff"]
     return len(cjk) / len(non_space)
+
+
+def _parse_jsonish(value: Any) -> Any:
+    if not isinstance(value, str):
+        return value
+    value = value.strip()
+    if not value or value[0] not in "[{":
+        return value
+    try:
+        return json.loads(value)
+    except json.JSONDecodeError:
+        return value
+
+
+def _walk_jsonish(value: Any) -> Any:
+    value = _parse_jsonish(value)
+    if isinstance(value, dict):
+        return {key: _walk_jsonish(item) for key, item in value.items()}
+    if isinstance(value, list):
+        return [_walk_jsonish(item) for item in value]
+    return value
+
+
+def extract_workflow_evidence(messages: list[dict[str, Any]], max_chars: int = 12000) -> str:
+    evidence: list[Any] = []
+    seen: set[str] = set()
+
+    def add(item: Any) -> None:
+        serialized = json.dumps(item, ensure_ascii=False, sort_keys=True)
+        if serialized in seen:
+            return
+        seen.add(serialized)
+        evidence.append(item)
+
+    def visit(value: Any, path: str = "") -> None:
+        value = _walk_jsonish(value)
+        if isinstance(value, dict):
+            if "preview_rows" in value:
+                add({
+                    "path": path,
+                    "name": value.get("name"),
+                    "row_count": value.get("row_count"),
+                    "columns": value.get("columns"),
+                    "preview_rows": value.get("preview_rows"),
+                })
+            if any(key in value for key in ("ratio", "answer", "value_2024", "value_2001", "result")):
+                compact = {
+                    key: value[key]
+                    for key in ("ratio", "answer", "value_2024", "value_2001", "result", "error")
+                    if key in value
+                }
+                if compact:
+                    add({"path": path, "values": compact})
+            for key, item in value.items():
+                visit(item, f"{path}.{key}" if path else str(key))
+        elif isinstance(value, list):
+            for index, item in enumerate(value):
+                visit(item, f"{path}[{index}]")
+
+    visit(messages)
+    text = json.dumps(evidence, ensure_ascii=False, indent=2)
+    if len(text) > max_chars:
+        return text[:max_chars] + "\n...[truncated]"
+    return text
 
 
 class DeepEyeClient:
@@ -235,11 +322,36 @@ def krama_prompt(task: dict[str, Any]) -> str:
     return (
         "You are running a KramaBench task inside DeepEye. Use only the attached datasource files. "
         "Create and execute a workflow if needed, compute the exact answer, and return the final answer "
-        "inside <Answer>...</Answer>. Do not guess and do not use web access.\n\n"
+        "inside <Answer>...</Answer>. Do not round numeric answers unless the question explicitly asks for rounding. "
+        "Do not guess and do not use web access.\n\n"
         f"Task ID: {task['id']}\n"
         f"Question: {task['query']}\n"
         f"Expected answer type: {task.get('answer_type')}\n"
         "Final response format: <Answer>number_or_short_value</Answer>"
+    )
+
+
+def krama_finalize_prompt(task: dict[str, Any], previous_text: str, evidence: str) -> str:
+    return (
+        "Your previous response did not satisfy the KramaBench final-answer contract. "
+        "Using only the workflow evidence below, return exactly one final answer. "
+        "For numeric answers, recompute the final arithmetic from the exact source values you used and keep at least "
+        "4 decimal places when the result is not an integer. Do not add explanation, markdown, or prose.\n\n"
+        f"Question: {task['query']}\n"
+        f"Previous response:\n{previous_text}\n\n"
+        f"Workflow evidence:\n{evidence}\n\n"
+        "Required output format: <Answer>exact_number_or_short_value</Answer>"
+    )
+
+
+def dacomp_finalize_prompt(previous_text: str) -> str:
+    return (
+        "请把上一轮结果整理为中文分析报告。要求：\n"
+        "1. 只使用中文，不要使用英文标题或英文叙述。\n"
+        "2. 保留关键数值、计算依据、规则/公式和建议。\n"
+        "3. 不要重新编造数据；如果上一轮信息不足，请明确说明限制。\n"
+        "4. 输出结构应包含：结论、关键依据、计算规则、建议。\n\n"
+        f"上一轮结果：\n{previous_text}"
     )
 
 
@@ -295,16 +407,24 @@ def run_krama(args: argparse.Namespace, client: DeepEyeClient) -> dict[str, Any]
             chat_start = client.start_chat(session_id, krama_prompt(task), datasource_ids)
             text, messages = client.wait_for_assistant(session_id, before, args.timeout)
             answer = extract_answer(text or "")
-            score = (
-                score_numeric(answer, task.get("answer"))
-                if str(task.get("answer_type", "")).startswith("numeric")
-                else {"correct": None, "reason": "non-numeric scoring not implemented"}
-            )
+            failure_reason = deepeye_failure_reason(text)
+            finalize_attempted = False
+            if text and not answer and not failure_reason:
+                finalize_attempted = True
+                before = len(messages)
+                evidence = extract_workflow_evidence(messages)
+                client.start_chat(session_id, krama_finalize_prompt(task, text, evidence), datasource_ids)
+                finalized_text, messages = client.wait_for_assistant(session_id, before, min(args.timeout, 300))
+                if finalized_text:
+                    text = finalized_text
+                    answer = extract_answer(text)
+                    failure_reason = deepeye_failure_reason(text)
+            score = score_krama_answer(answer, task)
             payload = {
                 "benchmark": "KramaBench",
                 "system": "DeepEye",
                 "task_id": task_id,
-                "status": "completed" if text else "timeout",
+                "status": "failed" if failure_reason else ("completed" if text else "timeout"),
                 "session_id": session_id,
                 "chat_start": chat_start,
                 "question": task.get("query"),
@@ -313,6 +433,8 @@ def run_krama(args: argparse.Namespace, client: DeepEyeClient) -> dict[str, Any]
                 "expected_answer": task.get("answer"),
                 "answer_type": task.get("answer_type"),
                 "final_answer": answer,
+                "failure_reason": failure_reason,
+                "finalize_attempted": finalize_attempted,
                 "score": score,
                 "text": text,
                 "messages": messages,
@@ -413,6 +535,14 @@ def run_dacomp(args: argparse.Namespace, client: DeepEyeClient) -> dict[str, Any
             before = len(client.get_messages(session_id))
             chat_start = client.start_chat(session_id, dacomp_prompt(task, profile), [datasource_id])
             text, messages = client.wait_for_assistant(session_id, before, args.timeout)
+            finalize_attempted = False
+            if text and cjk_ratio(text) < 0.12 and not deepeye_failure_reason(text):
+                finalize_attempted = True
+                before = len(messages)
+                client.start_chat(session_id, dacomp_finalize_prompt(text), [datasource_id])
+                finalized_text, messages = client.wait_for_assistant(session_id, before, min(args.timeout, 300))
+                if finalized_text:
+                    text = finalized_text
             failure_reason = deepeye_failure_reason(text)
             language_failure = None
             if text and cjk_ratio(text) < 0.12:
@@ -430,6 +560,7 @@ def run_dacomp(args: argparse.Namespace, client: DeepEyeClient) -> dict[str, Any
                 "datasource_id": datasource_id,
                 "text": text,
                 "failure_reason": failure_reason or language_failure,
+                "finalize_attempted": finalize_attempted,
                 "messages": messages,
                 "runtime_seconds": round(time.time() - started, 3),
             }

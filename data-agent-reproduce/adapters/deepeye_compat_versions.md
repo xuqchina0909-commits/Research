@@ -108,3 +108,42 @@ v2-model-routing：
 
 - KramaBench `legal-easy-3` 已越过 datasource 上传和 workflow 执行，能成功生成工作流并得到回答。
 - 但最终回答未按 `<Answer>...</Answer>` 输出，且只给出约 `13.16`，未达到 gold `13.1628` 的 4 位小数精度，因此仍判为 incorrect。
+
+## v3-output-contract
+
+目标：把 DeepEye 已经生成的分析结果收口为 benchmark 可判分的最终答案，避免“工作流成功但格式失败”污染全量测评。
+
+已完成：
+
+- KramaBench runner 在首轮回答缺少 `<Answer>...</Answer>` 时，会追加一次最终答案收口请求。
+- KramaBench 收口请求不泄露 gold answer，只要求基于上一轮计算和数据证据重新做精确算术，并严格输出 `<Answer>...</Answer>`。
+- DAComp runner 在首轮回答中文占比过低时，会追加一次中文报告收口请求。
+- DAComp 收口请求不重新编造数据，只要求基于上一轮结果整理为中文结论、关键依据、计算规则和建议。
+
+适用边界：
+
+- 该版本解决的是输出契约和语言契约，不等同于保证分析逻辑正确。
+- 如果首轮工作流本身失败、超时或数据计算错误，收口轮不会把失败伪装成成功。
+
+下一步验证：
+
+- 重新跑 KramaBench 最小任务，确认是否能输出 `<Answer>` 且达到数值精度。
+- 重新跑 DAComp 最小任务，确认是否能输出中文报告并通过语言闸门。
+- 只有两项都通过后，才进入 KramaBench + DAComp 多任务/全量横向对比。
+
+复测结论：
+
+- KramaBench `legal-easy-3` 在结构化证据收口后可输出 `<Answer>13.1622</Answer>`，runner 容差判定为 correct；但它仍未严格输出 gold 四位小数 `13.1628`，说明精确数值收口还有风险。
+- DAComp `dacomp-zh-001` 在中文收口后通过语言闸门，状态为 completed；但报告分析深度偏浅，主要复述评级规则，没有充分使用发票流水、上下游依赖和 1 亿元总额度约束。
+- KramaBench `legal-easy-5` 5 题闸门失败，4 道数值题全部 incorrect，1 道列表题输出“数据不足”文本。当前不进入全量。
+
+## v4-workflow-data-contract（建议）
+
+目标：解决 KramaBench 多任务失败暴露出的 workflow 数据契约问题，而不是继续扩大无效全量结果。
+
+需要修复：
+
+- 多个 `dataset_ref` 不能直接连到不支持多输入的 `llm.answer`，必须先用 `python.code` 合并或计算成单一结果。
+- `python.code` 生成时必须使用上游节点实际输出列名；`rows.select` 后列名通常是 `Unnamed: 2`，不能再访问原始语义列名 `Identity Theft `。
+- 修复失败时不应由收口轮把错误说明包装成 `<Answer>`，runner 应保留 failure/incorrect 语义。
+- KramaBench `list_exact` 已补充列表精确评分，后续需重跑 5 题闸门确认摘要完整性。

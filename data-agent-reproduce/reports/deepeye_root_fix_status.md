@@ -4,14 +4,14 @@
 
 ## 结论
 
-本轮继续推进了 DeepEye 的根因修复，但仍不建议进入全量 KramaBench / DAComp。
+本轮继续推进了 DeepEye 的根因修复和输出收口，但仍不建议进入全量 KramaBench / DAComp。
 
 原因不是链路完全不通，而是已经进入下一层质量问题：
 
-- DAComp：SQL 特殊表名问题已解决，Python merge 错误也能进入自动修复，工作流最终可成功；但最终报告仍输出英文，且分析只覆盖部分数据，未满足“中文、定量、完整”的 DAComp 要求。
-- KramaBench：文件上传和 workflow 执行已跑通；但最终没有按 `<Answer>...</Answer>` 输出，且答案只到 `13.16`，未达到正确答案 `13.1628` 的精度要求。
+- DAComp：SQL 特殊表名问题已解决，Python merge 错误也能进入自动修复，工作流最终可成功；通过二次收口后可以输出中文报告，但分析深度仍偏浅，对营收能力、盈利稳定性、上下游依赖和额度总额约束使用不足。
+- KramaBench：文件上传和 workflow 执行已跑通；通过二次收口后可以输出 `<Answer>...</Answer>`，但 5 题闸门显示答案稳定性不足，数值题仍大量错误。
 
-因此当前状态是：DeepEye 已从“最小集跑不通”推进到“最小集能跑到结果层，但输出格式/精度/报告质量不达标”。
+因此当前状态是：DeepEye 已从“最小集跑不通”推进到“最小集可收口”，但还没有达到“多任务稳定可全量测评”。
 
 ## 已完成修复
 
@@ -42,12 +42,33 @@
 - “工作流规划已停止 / Workflow execution failed” 不再误记为 completed。
 - DAComp 最终非中文报告会标记为 failed。
 
+6. 输出契约收口
+
+- KramaBench 首轮缺少 `<Answer>` 时，会追加一次最终答案收口请求。
+- KramaBench 收口请求会带上从 workflow trace 抽取的结构化证据，不泄露 gold answer。
+- DAComp 首轮报告中文占比过低时，会追加一次中文报告收口请求。
+- KramaBench runner 增加列表题精确评分，避免 `list_exact` 任务漏判。
+
 ## 最小集复测结果
 
 | Benchmark | Task | 当前状态 | 说明 |
 | --- | --- | --- | --- |
-| DAComp-DA | `dacomp-zh-001` | failed | 工作流成功，但最终报告仍是英文，runner 判为 `final answer is not a Chinese report` |
-| KramaBench | `legal-easy-3` | completed / incorrect | 工作流成功，但未输出 `<Answer>`，答案约为 `13.16`，不满足 gold `13.1628` |
+| DAComp-DA | `dacomp-zh-001` | completed | 二次收口后输出中文报告；但报告主要基于评级和首行流失率，分析质量仍需增强 |
+| KramaBench | `legal-easy-3` | completed / correct by tolerance | 二次收口后输出 `<Answer>13.1622</Answer>`；runner 容差判定通过，但未严格等于四位小数 gold `13.1628` |
+
+## 多任务闸门结果
+
+KramaBench `legal-easy-5` 5 题闸门结果：
+
+| Task | Gold | DeepEye final answer | 判定 |
+| --- | --- | --- | --- |
+| `legal-easy-3` | `13.1628` | `0.0000` | incorrect |
+| `legal-easy-4` | `2111635` | `1390952` | incorrect |
+| `legal-easy-5` | `5435` | `5059` | incorrect |
+| `legal-easy-9` | `2002` | `2003` | incorrect |
+| `legal-easy-10` | `[2010, 2011, 2012, 2013, 2014, 2019]` | 数据不足说明文本 | incorrect / 待列表评分补丁重跑 |
+
+结论：DeepEye 当前在 KramaBench 多任务上不稳定，不能进入全量；主要失败点不是接口链路，而是 workflow 修复失败、列名/多输入处理不稳定，以及 `llm.answer` 未正确消费 workflow 输出。
 
 ## 关键结果文件
 
@@ -65,24 +86,32 @@ data-agent-reproduce/runs/deepeye_benchmark_krama_upload600/kramabench/legal-eas
 data-agent-reproduce/runs/deepeye_benchmark_krama_upload600/kramabench/legal-easy-1/summary.csv
 ```
 
+v3 输出契约复测：
+
+```text
+data-agent-reproduce/runs/deepeye_benchmark_v3_evidence_contract_krama/kramabench/legal-easy-1/summary.csv
+data-agent-reproduce/runs/deepeye_benchmark_v3_output_contract_dacomp/dacomp-da/dacomp-da-zh/summary.csv
+data-agent-reproduce/runs/deepeye_benchmark_v3_multitask_krama5/kramabench/legal-easy-5/summary.csv
+```
+
 ## 是否进入全量
 
 暂时不进入全量。
 
-当前 DeepEye 已具备跑全量的技术条件，但全量会放大两个已知问题：
+当前 DeepEye 已具备跑全量的技术条件，但多任务闸门已经证明全量会放大两个已知问题：
 
-1. KramaBench 会产生大量“工作流执行了，但最终格式/精度不合格”的错误。
-2. DAComp 会产生大量“工作流成功，但报告语言或分析质量不达标”的错误。
+1. KramaBench 会产生大量“工作流执行或收口了，但答案错误”的结果。
+2. DAComp 会产生大量“工作流成功，但报告分析深度不达标”的结果。
 
 这类结果对横向对比价值有限，还会消耗较多 API 额度。
 
 ## 下一步建议
 
-优先做 `v3-output-contract`：
+优先做 `v4-workflow-data-contract`：
 
-- 对 KramaBench：在 runner 或 DeepEye 最终层增加强制 `<Answer>` 抽取/重写，或让 workflow 直接输出计算值而不是交给 `llm.answer` 自由发挥。
-- 对数值题：在 answer 缺失时，从 workflow 输出中做结构化数值校验，避免只靠最终自然语言。
-- 对 DAComp：在最终回复层增加中文输出后处理，必要时用同一模型再做一次“翻译为中文且不得改数值”的受控转换。
+- 对 KramaBench：约束 workflow 不要把多个 dataset_ref 直接接到 `llm.answer`；需要先用 `python.code` 合并/计算，再把单一结果数据集交给最终回答。
+- 对 KramaBench：修复多输入 `python.code` 生成时的列名问题，优先使用上游 `dataset_ref.columns` 和 preview rows 的实际列名。
+- 对 KramaBench：当 workflow 已产生结构化计算结果时，最终答案应优先从结构化结果收口，而不是复述 `llm.answer` 的自然语言。
 
 随后做 `v3-quality-guard`：
 

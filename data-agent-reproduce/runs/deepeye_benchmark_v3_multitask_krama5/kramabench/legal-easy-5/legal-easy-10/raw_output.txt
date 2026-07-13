@@ -1,0 +1,1 @@
+<Answer>The provided dataset only includes the years and does not contain the actual number of reports or the number of fraud reports for each year. Therefore, it's not possible to determine in which years fraud reports were at least 50% of the total reports.</Answer>
