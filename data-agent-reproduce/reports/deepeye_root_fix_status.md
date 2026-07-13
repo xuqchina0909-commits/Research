@@ -92,6 +92,27 @@ KramaBench `legal-easy-5` 5 题闸门结果：
 - v4 尚未让 DeepEye + 当前 `Qwen/Qwen3-Coder-30B-A3B-Instruct` 达到 KramaBench 多任务稳定运行。
 - 当前瓶颈主要是模型生成的 `python.code` 对 CSV 表头行、空行、NaN 的处理不稳，且自动修复轮次很容易耗尽。
 
+## 模型 A/B：Qwen3-Coder-480B-A35B
+
+用户将硅基流动模型从 `Qwen/Qwen3-Coder-30B-A3B-Instruct` 切换为 `Qwen/Qwen3-Coder-480B-A35B-Instruct` 后，已完成 smoke test，模型可正常返回 `OK`。
+
+KramaBench `legal-easy-5` 5 题闸门结果：
+
+| Task | Gold | DeepEye final answer | 判定 | 耗时 |
+| --- | --- | --- | --- | --- |
+| `legal-easy-3` | `13.1628` | `1.878` | incorrect | 25.493s |
+| `legal-easy-4` | `2111635` | `0` | incorrect | 190.752s |
+| `legal-easy-5` | `5435` | `1929` | incorrect | 25.465s |
+| `legal-easy-9` | `2002` | `2003` | incorrect | 115.673s |
+| `legal-easy-10` | `[2010, 2011, 2012, 2013, 2014, 2019]` | `2004, 2005, 2006, 2007, 2008` | incorrect | 1024.004s |
+
+结论：
+
+- `Qwen/Qwen3-Coder-480B-A35B-Instruct` 在本地 DeepEye + KramaBench CSV workflow 上没有带来提升，本次为 0/5。
+- 相比此前 30B-A3B 的 1/5，480B 本轮更慢且没有提升正确率。
+- 不建议用该模型继续跑 KramaBench 全量。
+- 这进一步说明当前问题不只是模型大小，而是 DeepEye workflow 策略对 Krama CSV 表格结构理解不稳定。
+
 ## 关键结果文件
 
 DAComp 中文约束复测：

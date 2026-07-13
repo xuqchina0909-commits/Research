@@ -160,3 +160,24 @@ v2-model-routing：
 - `deepeye_benchmark_v4_multitask_krama5`：5 题中仅 `legal-easy-9` 通过，其余真实标记 failed。
 - `deepeye_benchmark_v4_repairable_cleaning_krama5`：第 1 题耗时 425 秒后仍 failed，随后为控制 API 额度中止批跑。
 - 当前不进入全量。下一步应切换更强模型做 A/B，或在 DeepEye workflow 里加入更固定的 CSV 清洗/计算模板。
+
+## v5-model-ab-qwen3-coder-480b
+
+目标：验证硅基流动 `Qwen/Qwen3-Coder-480B-A35B-Instruct` 是否能改善 DeepEye 在 KramaBench CSV workflow 上的稳定性。
+
+配置：
+
+- `LLM_BASE_URL=https://api.siliconflow.cn/v1`
+- `LLM_MODEL=Qwen/Qwen3-Coder-480B-A35B-Instruct`
+- `DEEPEYE_LLM_STREAMING=false`
+
+验证：
+
+- DeepEye smoke test：`请只回答：OK`，返回 `OK`。
+- KramaBench `legal-easy-5` 5 题闸门：0/5 correct。
+
+结论：
+
+- 480B-A35B 在本闸门上没有提升，且 `legal-easy-10` 单题耗时超过 1000 秒。
+- 不建议继续用该模型跑 KramaBench 全量。
+- 下一步更应优先做 workflow 策略改造，或测试其他模型路线，而不是简单扩大 Qwen3-Coder 参数量。
