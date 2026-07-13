@@ -181,3 +181,19 @@ v2-model-routing：
 - 480B-A35B 在本闸门上没有提升，且 `legal-easy-10` 单题耗时超过 1000 秒。
 - 不建议继续用该模型跑 KramaBench 全量。
 - 下一步更应优先做 workflow 策略改造，或测试其他模型路线，而不是简单扩大 Qwen3-Coder 参数量。
+
+## v5-model-ab-deepseek-v3.2
+
+目标：验证硅基流动 `deepseek-ai/DeepSeek-V3.2` 是否可作为 DeepEye benchmark 主模型。
+
+验证：
+
+- DeepEye smoke test：`请只回答：OK`，返回 `OK`。
+- KramaBench `legal-easy-5` 闸门：第 1 题 `legal-easy-3` 耗时 280.938 秒，输出 `2024 vs 2001`，判定 incorrect；为控制 API 额度中止后续批跑。
+
+结论：
+
+- `deepseek-ai/DeepSeek-V3.2` 可以接入，但在 DeepEye + KramaBench workflow 上过慢且第 1 题错误。
+- 当前不建议继续模型横跳或跑全量。
+- 本地 `.env` 已切回 `Qwen/Qwen3-Coder-30B-A3B-Instruct` 作为低成本待机模型。
+- 下一阶段应优先做 workflow 策略修复：对 Krama CSV 任务使用固定清洗模板和结构化计算结果直出。

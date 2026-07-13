@@ -113,6 +113,19 @@ KramaBench `legal-easy-5` 5 题闸门结果：
 - 不建议用该模型继续跑 KramaBench 全量。
 - 这进一步说明当前问题不只是模型大小，而是 DeepEye workflow 策略对 Krama CSV 表格结构理解不稳定。
 
+## 模型 A/B：DeepSeek-V3.2
+
+硅基流动模型列表中可用 `deepseek-ai/DeepSeek-V3.2`。本地将 DeepEye `.env` 临时切换到该模型后，smoke test 正常返回 `OK`。
+
+KramaBench `legal-easy-5` 闸门启动后，第 1 题 `legal-easy-3` 耗时 280.938 秒完成，但答案为 `2024 vs 2001`，判定 incorrect。由于第 1 题已经明显过慢且错误，为避免继续消耗 API 额度，已中止后续批跑。
+
+结论：
+
+- `deepseek-ai/DeepSeek-V3.2` 可接入，但在 DeepEye + KramaBench 第一题上过慢且错误。
+- 不建议用该模型继续跑 KramaBench 全量。
+- 本地 `.env` 已切回更便宜的 `Qwen/Qwen3-Coder-30B-A3B-Instruct` 作为待机配置。
+- 当前优先级应从“继续换模型”转向“修 DeepEye workflow 策略”，尤其是 CSV 表头/空行识别、固定清洗模板、结构化结果直出。
+
 ## 关键结果文件
 
 DAComp 中文约束复测：
