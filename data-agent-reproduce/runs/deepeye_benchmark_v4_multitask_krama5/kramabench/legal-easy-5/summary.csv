@@ -1,0 +1,6 @@
+benchmark,system,task_id,status,correct,expected_answer,final_answer,runtime_seconds,text_chars
+KramaBench,DeepEye,legal-easy-3,failed,False,13.1628,,299.07,653
+KramaBench,DeepEye,legal-easy-4,failed,False,2111635,,70.474,2318
+KramaBench,DeepEye,legal-easy-5,failed,False,5435,,50.508,1767
+KramaBench,DeepEye,legal-easy-9,completed,True,2002,2002,50.526,21
+KramaBench,DeepEye,legal-easy-10,failed,False,"[2010, 2011, 2012, 2013, 2014, 2019]",,30.542,2386

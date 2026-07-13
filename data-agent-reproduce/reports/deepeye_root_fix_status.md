@@ -70,6 +70,28 @@ KramaBench `legal-easy-5` 5 题闸门结果：
 
 结论：DeepEye 当前在 KramaBench 多任务上不稳定，不能进入全量；主要失败点不是接口链路，而是 workflow 修复失败、列名/多输入处理不稳定，以及 `llm.answer` 未正确消费 workflow 输出。
 
+## v4 数据契约闸门复测
+
+本轮继续做了 `v4-workflow-data-contract`：
+
+- KramaBench prompt 增加 workflow 数据契约：CSV 题优先 `datasource.read -> python.code -> llm.answer`，多数据源必须先在 `python.code` 合并，最后传给 `llm.answer` 的应是紧凑结果数据集。
+- runner 增加结构化答案抽取：如果 workflow 已产生短列表或单行数值结果，优先从派生 `dataset_ref` 中抽取候选答案，减少 `llm.answer` 自然语言错误。
+- runner 增加失败防污染：workflow 明确失败时，不再进入 `<Answer>` 收口。
+- DeepEye repair 分类新增 Python 数值清洗错误：`invalid literal for int/float`、`cannot convert float NaN to integer`、`object has no attribute replace` 等会进入可修复类型。
+
+复测结果：
+
+| Run | 结果 | 说明 |
+| --- | --- | --- |
+| `deepeye_benchmark_v4_multitask_krama5` | 1/5 correct | `legal-easy-9` 通过；其余任务真实标记为 failed，不再假 completed |
+| `deepeye_benchmark_v4_repairable_cleaning_krama5` | 中止于第 2 题 | 第 1 题耗时 425 秒后仍 failed；为避免继续消耗 API 额度，中止批跑 |
+
+新的判断：
+
+- v4 改善了评测真实性：失败不再伪装成答案，列表题也能严格判分。
+- v4 尚未让 DeepEye + 当前 `Qwen/Qwen3-Coder-30B-A3B-Instruct` 达到 KramaBench 多任务稳定运行。
+- 当前瓶颈主要是模型生成的 `python.code` 对 CSV 表头行、空行、NaN 的处理不稳，且自动修复轮次很容易耗尽。
+
 ## 关键结果文件
 
 DAComp 中文约束复测：
@@ -107,11 +129,11 @@ data-agent-reproduce/runs/deepeye_benchmark_v3_multitask_krama5/kramabench/legal
 
 ## 下一步建议
 
-优先做 `v4-workflow-data-contract`：
+优先做 `v5-model-or-workflow-strategy`：
 
-- 对 KramaBench：约束 workflow 不要把多个 dataset_ref 直接接到 `llm.answer`；需要先用 `python.code` 合并/计算，再把单一结果数据集交给最终回答。
-- 对 KramaBench：修复多输入 `python.code` 生成时的列名问题，优先使用上游 `dataset_ref.columns` 和 preview rows 的实际列名。
-- 对 KramaBench：当 workflow 已产生结构化计算结果时，最终答案应优先从结构化结果收口，而不是复述 `llm.answer` 的自然语言。
+- 路线 A：切换更强的代码/工具调用模型做 A/B，例如更强 Qwen Coder 或 DeepSeek Coder/R1 系列，先只跑 Krama `legal-easy-5` 闸门。
+- 路线 B：继续改 DeepEye workflow 策略，在 CSV benchmark 任务中注入更固定的数据清洗模板，减少模型自由生成 Python 的空间。
+- 路线 C：保留 DeepEye 原生结果，同时在 adapter 中增加“结构化执行结果抽取/校验”作为单独指标，不把它混同为原生 DeepEye 准确率。
 
 随后做 `v3-quality-guard`：
 

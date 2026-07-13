@@ -147,3 +147,16 @@ v2-model-routing：
 - `python.code` 生成时必须使用上游节点实际输出列名；`rows.select` 后列名通常是 `Unnamed: 2`，不能再访问原始语义列名 `Identity Theft `。
 - 修复失败时不应由收口轮把错误说明包装成 `<Answer>`，runner 应保留 failure/incorrect 语义。
 - KramaBench `list_exact` 已补充列表精确评分，后续需重跑 5 题闸门确认摘要完整性。
+
+已完成：
+
+- KramaBench prompt 加强 CSV/file 工作流约束：优先 `datasource.read -> python.code -> llm.answer`，多数据集先在 `python.code` 合并，最终传递紧凑结果。
+- runner 新增从 workflow 派生 `dataset_ref` 中抽取结构化候选答案。
+- runner 在 workflow 明确失败时跳过最终收口，避免把失败说明包装成 `<Answer>`。
+- DeepEye repair 分类新增 Python 数值清洗错误，例如标题行/空值导致的 `invalid literal for int`、`cannot convert float NaN to integer`、`object has no attribute replace`。
+
+复测结论：
+
+- `deepeye_benchmark_v4_multitask_krama5`：5 题中仅 `legal-easy-9` 通过，其余真实标记 failed。
+- `deepeye_benchmark_v4_repairable_cleaning_krama5`：第 1 题耗时 425 秒后仍 failed，随后为控制 API 额度中止批跑。
+- 当前不进入全量。下一步应切换更强模型做 A/B，或在 DeepEye workflow 里加入更固定的 CSV 清洗/计算模板。

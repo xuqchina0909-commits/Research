@@ -251,6 +251,20 @@ def patch_workflow_prompts() -> None:
 - For `sql.execute`, always use explicit `AS` aliases for derived, aggregated, renamed, or ambiguous columns so downstream nodes receive stable column names.
 """,
     )
+    text = replace_once(
+        text,
+        """- For `python.code`, do not hardcode `pd.read_csv` / `pd.read_json` based on guesses. Use the preloaded helpers `load_dataset_ref(ref)` or `load_dataset_refs(data)` so file formats are handled correctly.
+- For `python.code`, never treat `data['dataset_ref']` as a single dict. It is always a list of dataset refs, even when only one upstream dataset is connected.
+- Do not use legacy keys like `preview` or `preview_path` inside `python.code`. The current dataset_ref contract uses `preview_rows` for metadata preview and `path` for the sandbox file path.
+""",
+        """- For `python.code`, do not hardcode `pd.read_csv` / `pd.read_json` based on guesses. Use the preloaded helpers `load_dataset_ref(ref)` or `load_dataset_refs(data)` so file formats are handled correctly.
+- For `python.code`, never treat `data['dataset_ref']` as a single dict. It is always a list of dataset refs, even when only one upstream dataset is connected.
+- Do not use legacy keys like `preview` or `preview_path` inside `python.code`. The current dataset_ref contract uses `preview_rows` for metadata preview and `path` for the sandbox file path.
+- If a calculation depends on multiple filtered/selected datasets, combine them in `python.code` and emit one compact result dataset before `llm.answer`. Do not connect multiple dataset_ref edges directly into a non-multiple input.
+- Prefer doing column-sensitive CSV calculations in one `python.code` node directly after `datasource.read`; intermediate `rows.select` nodes may preserve generic columns such as `Unnamed: 2`, so downstream code must use the immediate upstream schema exactly.
+- For benchmark-style exact-answer tasks, the last transform before `llm.answer` should emit a one-row or short-list dataset containing the final answer and minimal evidence, not a broad raw table.
+""",
+    )
     WORKFLOW_PROMPTS.write_text(text, encoding="utf-8")
 
 
@@ -269,6 +283,12 @@ def patch_repair_state() -> None:
                 "you are trying to merge on",
                 "merge on",
                 "columns for key",
+                "invalid literal for int",
+                "invalid literal for float",
+                "cannot convert float nan to integer",
+                "cannot convert non-finite values",
+                "object has no attribute 'replace'",
+                'object has no attribute "replace"',
             )
 """,
     )
@@ -279,6 +299,7 @@ def patch_repair_state() -> None:
 """,
         """            "Inside `python.code`, inspect `data.get('dataset_ref', [])` metadata first and align every join, groupby, and calculation to the emitted schema.",
             "Use `load_dataset_ref(ref)` or `load_dataset_refs(data)` for computation over complete upstream datasets; do not compute from `dataset_ref.preview_rows` except for quick schema inspection.",
+            "When converting strings to numbers, remove embedded header rows and blank/null rows first; use `pd.to_numeric(..., errors='coerce')` and filter nulls instead of direct `astype(int)` on raw columns.",
             "For pandas merges, verify that join keys represent the same entity and have compatible dtypes; if a lookup table is a curve or matrix rather than an entity table, compute a mapping instead of merging on row index.",
         ]
 """,

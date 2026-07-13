@@ -190,6 +190,93 @@ def extract_workflow_evidence(messages: list[dict[str, Any]], max_chars: int = 1
     return text
 
 
+def _dataset_ref_items(messages: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    items: list[dict[str, Any]] = []
+
+    def visit(value: Any, path: str = "") -> None:
+        value = _walk_jsonish(value)
+        if isinstance(value, dict):
+            if value.get("kind") == "dataset_ref" and isinstance(value.get("preview_rows"), list):
+                items.append({
+                    "path": path,
+                    "name": value.get("name"),
+                    "source": value.get("source"),
+                    "row_count": value.get("row_count"),
+                    "columns": value.get("columns"),
+                    "preview_rows": value.get("preview_rows"),
+                })
+            for key, item in value.items():
+                visit(item, f"{path}.{key}" if path else str(key))
+        elif isinstance(value, list):
+            for index, item in enumerate(value):
+                visit(item, f"{path}[{index}]")
+
+    visit(messages)
+    return items
+
+
+def _clean_scalar(value: Any) -> str | None:
+    if value is None:
+        return None
+    text = str(value).strip()
+    return text if text else None
+
+
+def _answer_from_dataset_ref_items(items: list[dict[str, Any]], task: dict[str, Any]) -> str | None:
+    answer_type = str(task.get("answer_type", ""))
+    derived_items = [
+        item for item in items
+        if item.get("source") not in {"datasource.read", "sql.execute"}
+        and isinstance(item.get("preview_rows"), list)
+        and item.get("preview_rows")
+    ]
+    derived_items.sort(key=lambda item: (int(item.get("row_count") or 0), len(str(item.get("path") or ""))))
+    if not derived_items:
+        return None
+
+    if answer_type.startswith("list"):
+        for item in derived_items:
+            rows = item.get("preview_rows") or []
+            columns = item.get("columns") or []
+            if not rows or not columns or len(columns) != 1:
+                continue
+            values = [_clean_scalar(row.get(columns[0])) for row in rows if isinstance(row, dict)]
+            values = [value for value in values if value is not None]
+            if values and all(re.fullmatch(r"-?\d+", value) for value in values):
+                return "[" + ", ".join(values) + "]"
+
+    if answer_type.startswith("numeric"):
+        preferred_names = (
+            "answer",
+            "final_answer",
+            "result",
+            "ratio",
+            "value",
+            "count",
+            "total",
+            "year",
+        )
+        for item in derived_items:
+            rows = item.get("preview_rows") or []
+            if len(rows) != 1 or not isinstance(rows[0], dict):
+                continue
+            row = rows[0]
+            keys = list(row.keys())
+            ordered_keys = sorted(
+                keys,
+                key=lambda key: 0 if any(name in str(key).lower() for name in preferred_names) else 1,
+            )
+            for key in ordered_keys:
+                value = _clean_scalar(row.get(key))
+                if value and extract_number(value) is not None:
+                    return value
+    return None
+
+
+def structured_answer_from_messages(messages: list[dict[str, Any]], task: dict[str, Any]) -> str | None:
+    return _answer_from_dataset_ref_items(_dataset_ref_items(messages), task)
+
+
 class DeepEyeClient:
     def __init__(self, api_base: str, email: str, password: str, timeout: int = 60):
         self.api_base = api_base.rstrip("/")
@@ -324,6 +411,14 @@ def krama_prompt(task: dict[str, Any]) -> str:
         "Create and execute a workflow if needed, compute the exact answer, and return the final answer "
         "inside <Answer>...</Answer>. Do not round numeric answers unless the question explicitly asks for rounding. "
         "Do not guess and do not use web access.\n\n"
+        "KramaBench workflow rules:\n"
+        "- For CSV/file tasks, prefer `datasource.read -> python.code -> llm.answer`.\n"
+        "- In `python.code`, load the complete dataframe with `load_dataset_refs(data)[0]`, inspect actual columns, "
+        "handle header rows embedded in the file, and emit exactly one compact result dataframe or JSON value.\n"
+        "- Avoid using `rows.select` before `python.code` for column-sensitive calculations because it may preserve generic "
+        "columns such as `Unnamed: 2`; if you do use it, downstream code must use the immediate upstream columns exactly.\n"
+        "- Do not connect multiple dataset_ref edges directly into `llm.answer`; combine them in `python.code` first.\n"
+        "- The final dataset passed to `llm.answer` should contain only the final answer and necessary evidence.\n\n"
         f"Task ID: {task['id']}\n"
         f"Question: {task['query']}\n"
         f"Expected answer type: {task.get('answer_type')}\n"
@@ -408,6 +503,10 @@ def run_krama(args: argparse.Namespace, client: DeepEyeClient) -> dict[str, Any]
             text, messages = client.wait_for_assistant(session_id, before, args.timeout)
             answer = extract_answer(text or "")
             failure_reason = deepeye_failure_reason(text)
+            structured_answer = structured_answer_from_messages(messages, task)
+            if structured_answer:
+                answer = structured_answer
+                text = f"<Answer>{structured_answer}</Answer>"
             finalize_attempted = False
             if text and not answer and not failure_reason:
                 finalize_attempted = True
@@ -419,6 +518,10 @@ def run_krama(args: argparse.Namespace, client: DeepEyeClient) -> dict[str, Any]
                     text = finalized_text
                     answer = extract_answer(text)
                     failure_reason = deepeye_failure_reason(text)
+                    structured_answer = structured_answer_from_messages(messages, task)
+                    if structured_answer:
+                        answer = structured_answer
+                        text = f"<Answer>{structured_answer}</Answer>"
             score = score_krama_answer(answer, task)
             payload = {
                 "benchmark": "KramaBench",
@@ -433,6 +536,7 @@ def run_krama(args: argparse.Namespace, client: DeepEyeClient) -> dict[str, Any]
                 "expected_answer": task.get("answer"),
                 "answer_type": task.get("answer_type"),
                 "final_answer": answer,
+                "structured_answer": structured_answer,
                 "failure_reason": failure_reason,
                 "finalize_attempted": finalize_attempted,
                 "score": score,

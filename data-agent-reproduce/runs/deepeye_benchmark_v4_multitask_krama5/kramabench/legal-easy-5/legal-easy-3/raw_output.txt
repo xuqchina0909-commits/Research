@@ -1,0 +1,16 @@
+Workflow planning stopped: Workflow execution failed at node process_data (python.code): Traceback (most recent call last):
+  File "/workspace/.workflow_scripts/process_data.py", line 73, in <module>
+    identity_theft_2001 = int(row_2001['Unnamed: 2'].replace(',', ''))
+ValueError: invalid literal for int() with base 10: 'Identity Theft '
+
+INPUT_PREVIEW (first 10 lines):
+{
+  "dataset_ref": [
+    {
+      "kind": "dataset_ref",
+      "path": "/workspace/data/2024_CSN_Number_of_Reports_by_Type.csv",
+      "format": "csv",
+      "source": "datasource.read",
+      "name": "2024_CSN_Number_of_Reports_by_Type",
+      "row_count": 28,
+      "columns": [
