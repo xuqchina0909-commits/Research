@@ -1,0 +1,1 @@
+DeepEye workflow planning did not complete with the current SiliconFlow Qwen/Qwen3-Coder-30B-A3B-Instruct configuration. The worker reached the model call path but remained in repeated /chat/completions retries or long-response waiting during KramaBench legal-easy-3.

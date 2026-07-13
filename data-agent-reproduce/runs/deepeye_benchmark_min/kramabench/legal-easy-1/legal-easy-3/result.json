@@ -1,0 +1,19 @@
+{
+  "benchmark": "KramaBench",
+  "system": "DeepEye",
+  "task_id": "legal-easy-3",
+  "status": "failed",
+  "question": "Give the ratio of identity theft reports in 2024 vs 2001? Round to 4 decimal places",
+  "data_sources": [
+    "2024_CSN_Number_of_Reports_by_Type.csv"
+  ],
+  "expected_answer": 13.1628,
+  "answer_type": "numeric_approximate",
+  "final_answer": null,
+  "score": {
+    "correct": false,
+    "reason": "DeepEye workflow planning did not complete with the current SiliconFlow Qwen/Qwen3-Coder-30B-A3B-Instruct configuration. The worker reached the model call path but remained in repeated /chat/completions retries or long-response waiting during KramaBench legal-easy-3."
+  },
+  "text": "DeepEye workflow planning did not complete with the current SiliconFlow Qwen/Qwen3-Coder-30B-A3B-Instruct configuration. The worker reached the model call path but remained in repeated /chat/completions retries or long-response waiting during KramaBench legal-easy-3.",
+  "runtime_seconds": 4034.067
+}
