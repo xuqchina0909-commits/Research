@@ -37,13 +37,74 @@
 
 ## 下一版本建议
 
-v2-schema-sql-guard：
+## v2-schema-sql-guard
+
+目标：从执行层根治 DAComp 中特殊表名导致的 SQL 失败。
+
+已完成：
+
+- `sql.execute` 在 SQLite 数据源执行前读取真实表名。
+- 对 schema 中包含空格、符号、标点或非普通标识符的表名，自动把 SQL 中未引用的真实表名替换为 SQLite 双引号引用。
+- workflow prompt 增加规则：表名/列名包含特殊字符时必须引用，例如 `FROM "annual_rate_&_churn"`。
+- 补丁脚本已纳入该修复。
+
+适用边界：
+
+- 当前只自动修复 SQLite 表名，不修改普通表名，不处理任意 SQL 重写。
+- 这个修复覆盖 DAComp `annual_rate_&_churn` 失败点，但不保证模型后续 Python join/分析逻辑一定正确。
+
+## 后续建议
+
+v2-schema-sql-guard-plus：
 
 - 在 DeepEye workflow SQL 节点执行前增加 schema-aware SQL sanitizer 或 validator。
-- 对所有表名和列名统一生成安全引用形式，例如 SQLite 使用 `"table name"`。
+- 对所有表名和列名统一生成安全引用形式，而不只是特殊表名兜底。
 - 对含空格、`&`、`-`、中文等特殊字符的表名增加回归用例。
 
 v2-model-routing：
 
 - 为 DeepEye workflow planning 配置更强的工具调用/长上下文模型。
 - 保留三方 OpenAI-compatible 路线，但把模型、base URL、streaming、timeout 作为可记录的实验变量。
+
+## v2-model-timeout-boundary
+
+目标：避免外部 OpenAI-compatible 模型长时间悬挂导致 benchmark runner 等待几十分钟。
+
+已完成：
+
+- DeepEye agent 使用 `LLM_REQUEST_TIMEOUT_SECONDS` 控制 ChatOpenAI 请求超时。
+- DeepEye agent 使用 `LLM_MAX_RETRIES` 控制 ChatOpenAI 最大重试次数。
+- 本地默认记录为 `LLM_REQUEST_TIMEOUT_SECONDS=120`、`LLM_MAX_RETRIES=1`。
+
+当前判断：
+
+- 这不是提升答案质量的修复，而是让失败变得可控、可统计。
+- 当前硅基流动 `Qwen/Qwen3-Coder-30B-A3B-Instruct` 在 DeepEye supervisor/workflow planning 上仍可能不稳定。后续如果最小集仍超时，应切换更强工具调用模型做 A/B。
+
+## v2-python-repair-guard
+
+目标：让常见 `python.code` schema/merge 运行错误进入 DeepEye 自动修复，而不是直接终止。
+
+已完成：
+
+- 将 pandas merge key 类型不一致错误，例如 `You are trying to merge on str and int64 columns`，归类为 `workflow_python_schema_invalid`。
+- repair issues 增加约束：计算必须使用 `load_dataset_ref(ref)` / `load_dataset_refs(data)` 读取完整上游数据，不能只基于 `dataset_ref.preview_rows`。
+- repair issues 增加约束：pandas merge 前必须确认 join key 表示同一实体且 dtype 兼容；如果上游表是曲线/矩阵，应改用映射或规则计算，不要按行索引合并。
+
+复测结论：
+
+- DAComp `dacomp-zh-001` 已能从初始 Python merge 失败进入 `update_workflow` + `run_workflow` 修复循环，并最终得到 workflow success。
+- 但最终报告仍被当前模型输出为英文，且分析质量不足，因此 benchmark runner 已按“不是中文报告”标记为 failed。
+
+## v2-upload-timeout
+
+目标：避免 KramaBench 小 CSV 上传/同步 sandbox 时因 runner 180 秒读超时而误判。
+
+已完成：
+
+- DeepEye benchmark runner 将 file datasource upload timeout 从 180 秒提高到 600 秒。
+
+复测结论：
+
+- KramaBench `legal-easy-3` 已越过 datasource 上传和 workflow 执行，能成功生成工作流并得到回答。
+- 但最终回答未按 `<Answer>...</Answer>` 输出，且只给出约 `13.16`，未达到 gold `13.1628` 的 4 位小数精度，因此仍判为 incorrect。

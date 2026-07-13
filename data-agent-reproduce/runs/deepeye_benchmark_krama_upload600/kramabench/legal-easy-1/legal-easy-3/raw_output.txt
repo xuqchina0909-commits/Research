@@ -1,0 +1,12 @@
+To analyze the ratio of identity theft reports between 2024 and 2001:
+
+1. **Identify the values**:
+   - 2024: 1,135,291 reports
+   - 2001: 86,250 reports
+
+2. **Calculate the ratio**:
+   - Ratio = 1,135,291 / 86,250 ≈ 13.16
+
+3. **Interpretation**:
+   - The number of identity theft reports in 2024 is approximately **13.16 times** higher than in 2001.
+   - This indicates a significant increase in reported identity theft cases over the 23-year period.

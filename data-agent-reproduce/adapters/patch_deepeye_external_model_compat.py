@@ -12,6 +12,10 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 DEEPEYE = ROOT / "repos" / "DeepEye"
 AGENT_TASKS = DEEPEYE / "packages" / "backend" / "app" / "tasks" / "agent_tasks.py"
+CONFIG = DEEPEYE / "packages" / "backend" / "app" / "core" / "config.py"
+SQL_EXECUTE = DEEPEYE / "packages" / "backend" / "app" / "node" / "data" / "sql_execute.py"
+REPAIR_STATE = DEEPEYE / "packages" / "backend" / "app" / "workflow" / "repair" / "state.py"
+WORKFLOW_PROMPTS = DEEPEYE / "packages" / "backend" / "app" / "workflow" / "prompts.py"
 ENV_FILE = DEEPEYE / ".env"
 
 
@@ -67,6 +71,8 @@ async def _run_agent_async(agent_input: AgentInput) -> None:
         base_url=settings.LLM_BASE_URL,
         model=settings.LLM_MODEL,
         temperature=settings.LLM_TEMPERATURE,
+        timeout=settings.LLM_REQUEST_TIMEOUT_SECONDS,
+        max_retries=settings.LLM_MAX_RETRIES,
         streaming=streaming,
     )
 
@@ -85,6 +91,21 @@ def _extract_last_message_content(result) -> str | None:
 
 
 async def _run_agent_async(agent_input: AgentInput) -> None:
+""",
+    )
+    text = replace_once(
+        text,
+        """        model=settings.LLM_MODEL,
+        temperature=settings.LLM_TEMPERATURE,
+        streaming=streaming,
+    )
+""",
+        """        model=settings.LLM_MODEL,
+        temperature=settings.LLM_TEMPERATURE,
+        timeout=settings.LLM_REQUEST_TIMEOUT_SECONDS,
+        max_retries=settings.LLM_MAX_RETRIES,
+        streaming=streaming,
+    )
 """,
     )
     text = replace_once(
@@ -120,9 +141,160 @@ async def _run_agent_async(agent_input: AgentInput) -> None:
     AGENT_TASKS.write_text(text, encoding="utf-8")
 
 
+def patch_config() -> None:
+    text = CONFIG.read_text(encoding="utf-8")
+    text = replace_once(
+        text,
+        """    LLM_TEMPERATURE: float = 0.7
+    LLM_MAX_TOKENS: int = 8192  # max tokens for completion across agent and artifact generation
+    STARTUP_WARMUP_ENABLED: bool = True
+""",
+        """    LLM_TEMPERATURE: float = 0.7
+    LLM_MAX_TOKENS: int = 8192  # max tokens for completion across agent and artifact generation
+    LLM_REQUEST_TIMEOUT_SECONDS: float = 120.0
+    LLM_MAX_RETRIES: int = 1
+    STARTUP_WARMUP_ENABLED: bool = True
+""",
+    )
+    CONFIG.write_text(text, encoding="utf-8")
+
+
+def patch_sql_execute() -> None:
+    text = SQL_EXECUTE.read_text(encoding="utf-8")
+    text = replace_once(
+        text,
+        """from __future__ import annotations
+
+from typing import Any
+
+from sqlalchemy.orm import Session
+""",
+        """from __future__ import annotations
+
+import re
+from typing import Any
+
+from sqlalchemy import inspect
+from sqlalchemy.orm import Session
+""",
+    )
+    text = replace_once(
+        text,
+        """from deepeye.workflows.models import Node, Port
+from deepeye.workflows.registry import NodeSpec
+
+
+class SqlExecuteHandler:
+""",
+        """from deepeye.workflows.models import Node, Port
+from deepeye.workflows.registry import NodeSpec
+
+
+def _quote_sqlite_identifier(identifier: str) -> str:
+    return '"' + identifier.replace('"', '""') + '"'
+
+
+def _is_plain_sql_identifier(identifier: str) -> bool:
+    return bool(re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*", identifier))
+
+
+def _auto_quote_sqlite_table_names(query: str, table_names: list[str]) -> str:
+    fixed_query = query
+    for table_name in sorted(table_names, key=len, reverse=True):
+        if _is_plain_sql_identifier(table_name):
+            continue
+        quoted = _quote_sqlite_identifier(table_name)
+        pattern = re.compile(
+            rf'(?<!["`\\[\\w]){re.escape(table_name)}(?!["`\\]\\w])'
+        )
+        fixed_query = pattern.sub(quoted, fixed_query)
+    return fixed_query
+
+
+def _prepare_sql_query(engine, datasource_type: str | None, query: str) -> str:
+    if (datasource_type or "").lower() != "sqlite":
+        return query
+    try:
+        table_names = inspect(engine).get_table_names()
+    except Exception:
+        return query
+    return _auto_quote_sqlite_table_names(query, table_names)
+
+
+class SqlExecuteHandler:
+""",
+    )
+    text = replace_once(
+        text,
+        """        engine = create_engine(connection_string)
+        if self.sandbox:
+""",
+        """        engine = create_engine(connection_string)
+        prepared_query = _prepare_sql_query(engine, datasource_type, str(query))
+        if self.sandbox:
+""",
+    )
+    text = replace_once(text, "                query=str(query),\n", "                query=prepared_query,\n")
+    text = replace_once(text, "        rows = fetch_rows(engine, str(query), limit)\n", "        rows = fetch_rows(engine, prepared_query, limit)\n")
+    SQL_EXECUTE.write_text(text, encoding="utf-8")
+
+
+def patch_workflow_prompts() -> None:
+    text = WORKFLOW_PROMPTS.read_text(encoding="utf-8")
+    text = replace_once(
+        text,
+        """- `sql.execute` can only reference tables and columns that exist in the attached database schema. Never reference file-only columns, CSV headers, or file-derived metadata inside SQL.
+- For `sql.execute`, always use explicit `AS` aliases for derived, aggregated, renamed, or ambiguous columns so downstream nodes receive stable column names.
+""",
+        """- `sql.execute` can only reference tables and columns that exist in the attached database schema. Never reference file-only columns, CSV headers, or file-derived metadata inside SQL.
+- Quote database identifiers exactly when table or column names contain spaces, punctuation, symbols, or non-ASCII characters. For SQLite, use double quotes, for example `FROM "annual_rate_&_churn"`.
+- For `sql.execute`, always use explicit `AS` aliases for derived, aggregated, renamed, or ambiguous columns so downstream nodes receive stable column names.
+""",
+    )
+    WORKFLOW_PROMPTS.write_text(text, encoding="utf-8")
+
+
+def patch_repair_state() -> None:
+    text = REPAIR_STATE.read_text(encoding="utf-8")
+    text = replace_once(
+        text,
+        """                "keyerror",
+                "column not found",
+                "no such column",
+            )
+""",
+        """                "keyerror",
+                "column not found",
+                "no such column",
+                "you are trying to merge on",
+                "merge on",
+                "columns for key",
+            )
+""",
+    )
+    text = replace_once(
+        text,
+        """            "Inside `python.code`, inspect `data.get('dataset_ref', [])` metadata first and align every join, groupby, and calculation to the emitted schema.",
+        ]
+""",
+        """            "Inside `python.code`, inspect `data.get('dataset_ref', [])` metadata first and align every join, groupby, and calculation to the emitted schema.",
+            "Use `load_dataset_ref(ref)` or `load_dataset_refs(data)` for computation over complete upstream datasets; do not compute from `dataset_ref.preview_rows` except for quick schema inspection.",
+            "For pandas merges, verify that join keys represent the same entity and have compatible dtypes; if a lookup table is a curve or matrix rather than an entity table, compute a mapping instead of merging on row index.",
+        ]
+""",
+    )
+    REPAIR_STATE.write_text(text, encoding="utf-8")
+
+
 def main() -> None:
+    patch_config()
     patch_agent_tasks()
+    patch_sql_execute()
+    patch_workflow_prompts()
+    patch_repair_state()
     set_env_default(ENV_FILE, "DEEPEYE_LLM_STREAMING", "false")
+    set_env_default(ENV_FILE, "LLM_REQUEST_TIMEOUT_SECONDS", "120")
+    set_env_default(ENV_FILE, "LLM_MAX_RETRIES", "1")
     set_env_default(ENV_FILE, "DOCKER_CONTROL_TIMEOUT_SECONDS", "600")
     print("DeepEye external-model compatibility patch applied.")
 

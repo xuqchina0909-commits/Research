@@ -81,7 +81,9 @@ def deepeye_failure_reason(text: str | None) -> str | None:
         return None
     failure_markers = [
         "工作流规划在自动修复两次后仍未收敛",
+        "工作流规划已停止",
         "工作流规划未收敛",
+        "Workflow execution failed",
         "Workflow repair limit exceeded",
         "repair limit exceeded",
     ]
@@ -89,6 +91,16 @@ def deepeye_failure_reason(text: str | None) -> str | None:
         if marker in text:
             return marker
     return None
+
+
+def cjk_ratio(text: str | None) -> float:
+    if not text:
+        return 0.0
+    non_space = [char for char in text if not char.isspace()]
+    if not non_space:
+        return 0.0
+    cjk = [char for char in non_space if "\u4e00" <= char <= "\u9fff"]
+    return len(cjk) / len(non_space)
 
 
 class DeepEyeClient:
@@ -154,7 +166,7 @@ class DeepEyeClient:
                 "POST",
                 f"/api/v1/datasources/upload?session_id={session_id}",
                 files={"file": (path.name, handle)},
-                timeout=180,
+                timeout=600,
             )
         return str(response.json()["id"])
 
@@ -358,7 +370,15 @@ def dacomp_prompt(task: dict[str, Any], profile: str) -> str:
     return (
         "You are running a DAComp data-analysis task inside DeepEye. Use the attached SQLite datasource as the "
         "authoritative data source. Produce a detailed Chinese analytical report with quantitative evidence, "
-        "explicit formulas/rules, and final recommendations. Do not invent table names.\n\n"
+        "explicit formulas/rules, and final recommendations. The final answer MUST be written in Chinese only. "
+        "Do not use English headings or English narrative. Do not invent table names.\n\n"
+        "Workflow constraints:\n"
+        "- For python.code nodes, load the complete upstream datasets with load_dataset_ref(ref) or load_dataset_refs(data). "
+        "Do not compute from dataset_ref.preview_rows except for schema inspection.\n"
+        "- The annual_rate_&_churn table is an interest-rate/churn curve by annual interest rate, not a company entity table. "
+        "Do not merge company credit ratings to the row index of that table.\n"
+        "- If using the churn curve, derive a rating-specific rule by choosing or optimizing an annual interest rate for each rating, "
+        "then map that rule to companies by Credit Rating.\n\n"
         f"Task ID: {task['instance_id']}\n"
         f"Instruction:\n{task['instruction']}\n\n"
         f"Database profile:\n{profile}\n\n"
@@ -394,11 +414,14 @@ def run_dacomp(args: argparse.Namespace, client: DeepEyeClient) -> dict[str, Any
             chat_start = client.start_chat(session_id, dacomp_prompt(task, profile), [datasource_id])
             text, messages = client.wait_for_assistant(session_id, before, args.timeout)
             failure_reason = deepeye_failure_reason(text)
+            language_failure = None
+            if text and cjk_ratio(text) < 0.12:
+                language_failure = "final answer is not a Chinese report"
             payload = {
                 "benchmark": "DAComp-DA",
                 "system": "DeepEye",
                 "task_id": task["instance_id"],
-                "status": "failed" if failure_reason else ("completed" if text else "timeout"),
+                "status": "failed" if (failure_reason or language_failure) else ("completed" if text else "timeout"),
                 "session_id": session_id,
                 "chat_start": chat_start,
                 "instruction": task.get("instruction"),
@@ -406,7 +429,7 @@ def run_dacomp(args: argparse.Namespace, client: DeepEyeClient) -> dict[str, Any
                 "container_sqlite_path": str(container_copy),
                 "datasource_id": datasource_id,
                 "text": text,
-                "failure_reason": failure_reason,
+                "failure_reason": failure_reason or language_failure,
                 "messages": messages,
                 "runtime_seconds": round(time.time() - started, 3),
             }
