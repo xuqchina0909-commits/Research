@@ -152,6 +152,32 @@ KramaBench `legal-easy-5` 5 题闸门结果：
 - 模型仍会绕开模板使用 `rows.select` / `rows.filter`，或生成不可执行 Python。
 - 下一步应改为确定性 Krama CSV 执行器/校验器：由 adapter 或 DeepEye 专用节点负责表格清洗和结构化计算，模型只负责选择字段和解释，不再自由生成整段清洗代码。
 
+## DAComp 中文集试跑
+
+用户提出改试 DAComp/DataCamp 方向后，使用当前低成本待机模型 `Qwen/Qwen3-Coder-30B-A3B-Instruct` 跑 DAComp 中文集前 5 题闸门。
+
+结果：
+
+| Task | 状态 | 说明 |
+| --- | --- | --- |
+| `dacomp-zh-001` | completed | DeepEye 完成 workflow，并经中文收口输出中文报告 |
+| `dacomp-zh-002` | failed | 本地缺少 `dacomp-002.sqlite` |
+| `dacomp-zh-003` | failed | 本地缺少 `dacomp-003.sqlite` |
+| `dacomp-zh-004` | failed | 本地缺少 `dacomp-004.sqlite` |
+| `dacomp-zh-005` | failed | 本地缺少 `dacomp-005.sqlite` |
+
+当前本地 DAComp 数据目录仅包含：
+
+```text
+data-agent-reproduce/repos/DAComp/dacomp-da/tasks/dacomp-001/dacomp-001.sqlite
+```
+
+结论：
+
+- DAComp 比 Krama 更适合当前 DeepEye 形态：第 1 题能稳定跑到中文报告。
+- 目前不能继续做 DAComp 多任务横评，原因是数据文件未下载完整，不是模型或 DeepEye 链路失败。
+- 下一步应先下载 HuggingFace 上的 `DAComp/dacomp-da` 或 `DAComp/dacomp-da-zh` 数据集，再跑 DAComp 5/20/100 题闸门。
+
 ## 关键结果文件
 
 DAComp 中文约束复测：

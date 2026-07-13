@@ -213,3 +213,23 @@ v2-model-routing：
 - `deepeye_benchmark_v6_subtask_template_krama5`：5/5 failed。
 - 失败原因包括 workflow 修复不收敛、Python 执行失败、以及生成代码缩进错误。
 - 结论是 prompt 注入不足以解决 Krama CSV 任务，下一步应实现确定性 Krama CSV 执行器/校验器，或在 DeepEye 内部新增专用数据清洗节点。
+
+## v7-dacomp-data-availability-gate
+
+目标：转向 DAComp 中文分析类 benchmark，验证当前 DeepEye 在报告型任务上的可用性。
+
+复测：
+
+- 使用当前待机模型 `Qwen/Qwen3-Coder-30B-A3B-Instruct`。
+- 运行 DAComp 中文集前 5 题。
+
+结果：
+
+- `dacomp-zh-001` completed，可生成中文报告。
+- `dacomp-zh-002` 到 `dacomp-zh-005` 均失败，原因是本地缺少对应 SQLite 文件。
+
+结论：
+
+- DAComp 方向比 Krama 更适合当前 DeepEye：至少已验证 `dacomp-zh-001` 可通。
+- 当前 blocker 是 DAComp 数据没有完整下载。本地只有 `dacomp-001.sqlite`。
+- 下一步应下载 HuggingFace 数据集 `DAComp/dacomp-da` 或 `DAComp/dacomp-da-zh` 后，再跑 DAComp 多任务闸门。

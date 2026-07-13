@@ -1,0 +1,1 @@
+FileNotFoundError: Missing DAComp sqlite: /Users/xuq/Documents/Research/data-agent-reproduce/repos/DAComp/dacomp-da/tasks/dacomp-004/dacomp-004.sqlite
