@@ -1,0 +1,20 @@
+Workflow planning stopped: Workflow execution failed at node process_data (python.code): Traceback (most recent call last):
+  File "/workspace/.workflow_scripts/process_data.py", line 88, in <module>
+    processed_df[col] = processed_df[col].astype(str).str.replace(',', '').str.replace('$', '').str.replace('K', 'e3').str.replace('M', 'e6')
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.14/site-packages/pandas/core/generic.py", line 6206, in __getattr__
+    return object.__getattribute__(self, name)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+AttributeError: 'DataFrame' object has no attribute 'str'. Did you mean: 'std'?
+
+INPUT_PREVIEW (first 10 lines):
+{
+  "dataset_ref": [
+    {
+      "kind": "dataset_ref",
+      "path": "/workspace/data/2024_CSN_Data_Contributors.csv",
+      "format": "csv",
+      "source": "datasource.read",
+      "name": "2024_CSN_Data_Contributors",
+      "row_count": 100,
+      "columns": [

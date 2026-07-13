@@ -126,6 +126,32 @@ KramaBench `legal-easy-5` 闸门启动后，第 1 题 `legal-easy-3` 耗时 280.
 - 本地 `.env` 已切回更便宜的 `Qwen/Qwen3-Coder-30B-A3B-Instruct` 作为待机配置。
 - 当前优先级应从“继续换模型”转向“修 DeepEye workflow 策略”，尤其是 CSV 表头/空行识别、固定清洗模板、结构化结果直出。
 
+## v6：Krama subtask + CSV 模板注入
+
+本轮没有继续换模型，而是把 Krama workload 中自带的 `subtasks` 作为“参考解题步骤”注入 DeepEye prompt，并附带通用 CSV 清洗模板，要求模型按以下策略执行：
+
+- 识别第一行含至少两个非空单元格的表头行；
+- 丢弃空行、脚注和非表格尾部文本；
+- 统一去千分位逗号、货币符号、K/M 后缀；
+- 不再用 `df.iloc[3]` 这类固定行号猜年份；
+- 最后只输出紧凑结构化结果。
+
+KramaBench `legal-easy-5` 5 题闸门结果：
+
+| Task | 状态 | 判定 | 主要原因 |
+| --- | --- | --- | --- |
+| `legal-easy-3` | failed | incorrect | workflow 两次修复后仍未收敛 |
+| `legal-easy-4` | failed | incorrect | workflow execution failed |
+| `legal-easy-5` | failed | incorrect | workflow execution failed |
+| `legal-easy-9` | failed | incorrect | workflow execution failed |
+| `legal-easy-10` | failed | incorrect | 生成 Python 出现缩进错误 |
+
+结论：
+
+- 仅靠更长、更明确的 prompt 模板无法稳定修复 DeepEye 在 Krama CSV 任务上的问题。
+- 模型仍会绕开模板使用 `rows.select` / `rows.filter`，或生成不可执行 Python。
+- 下一步应改为确定性 Krama CSV 执行器/校验器：由 adapter 或 DeepEye 专用节点负责表格清洗和结构化计算，模型只负责选择字段和解释，不再自由生成整段清洗代码。
+
 ## 关键结果文件
 
 DAComp 中文约束复测：

@@ -1,0 +1,15 @@
+Workflow planning stopped: Workflow execution failed at node process_data (python.code):   File "/workspace/.workflow_scripts/process_data.py", line 78
+    df = df.dropna()
+IndentationError: unexpected indent
+
+INPUT_PREVIEW (first 10 lines):
+{
+  "dataset_ref": [
+    {
+      "kind": "dataset_ref",
+      "path": "/workspace/data/2024_CSN_Number_of_Reports_by_Type.csv",
+      "format": "csv",
+      "source": "datasource.read",
+      "name": "2024_CSN_Number_of_Reports_by_Type",
+      "row_count": 28,
+      "columns": [

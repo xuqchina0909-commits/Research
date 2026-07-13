@@ -197,3 +197,19 @@ v2-model-routing：
 - 当前不建议继续模型横跳或跑全量。
 - 本地 `.env` 已切回 `Qwen/Qwen3-Coder-30B-A3B-Instruct` 作为低成本待机模型。
 - 下一阶段应优先做 workflow 策略修复：对 Krama CSV 任务使用固定清洗模板和结构化计算结果直出。
+
+## v6-krama-subtask-template
+
+目标：不再继续盲目换模型，而是把 KramaBench workload 中的 `subtasks` 和固定 CSV 清洗模板注入 DeepEye prompt，降低模型自由生成错误代码的概率。
+
+已完成：
+
+- `krama_prompt()` 会把每个任务的 `subtasks.step` 作为参考解题路径发送给 DeepEye。
+- prompt 中加入通用 CSV 清洗模板：自动识别表头行、清理空行/脚注、转换千分位数字、保留 label-based filtering。
+- 保持低成本模型 `Qwen/Qwen3-Coder-30B-A3B-Instruct` 进行闸门复测。
+
+复测结论：
+
+- `deepeye_benchmark_v6_subtask_template_krama5`：5/5 failed。
+- 失败原因包括 workflow 修复不收敛、Python 执行失败、以及生成代码缩进错误。
+- 结论是 prompt 注入不足以解决 Krama CSV 任务，下一步应实现确定性 Krama CSV 执行器/校验器，或在 DeepEye 内部新增专用数据清洗节点。

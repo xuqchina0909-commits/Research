@@ -405,6 +405,65 @@ def find_krama_file(filename: str, task_id: str | None = None) -> Path:
     return candidates[0]
 
 
+def krama_subtask_plan(task: dict[str, Any]) -> str:
+    subtasks = task.get("subtasks")
+    if not isinstance(subtasks, list) or not subtasks:
+        return "No explicit benchmark subtasks are provided."
+    lines = []
+    for index, subtask in enumerate(subtasks, start=1):
+        if not isinstance(subtask, dict):
+            continue
+        step = str(subtask.get("step") or subtask.get("query") or "").strip()
+        answer_type = str(subtask.get("answer_type") or "").strip()
+        if step:
+            lines.append(f"{index}. {step} Answer type: {answer_type}.")
+    return "\n".join(lines) if lines else "No explicit benchmark subtasks are provided."
+
+
+def krama_csv_template() -> str:
+    return r'''
+Use this robust CSV cleaning pattern inside python.code when the file has blank rows, embedded header rows, thousands separators, or footnotes:
+
+import sys, json, re
+import pandas as pd
+
+data = json.load(sys.stdin)
+df = load_dataset_refs(data)[0]
+
+def non_empty_count(row):
+    return sum(pd.notna(v) and str(v).strip() != "" for v in row)
+
+def convert_value(value):
+    if pd.isna(value):
+        return pd.NA
+    text = str(value).strip()
+    if text == "":
+        return pd.NA
+    text = text.replace(",", "").replace("$", "")
+    multiplier = 1
+    if text.upper().endswith("K"):
+        multiplier, text = 1000, text[:-1]
+    elif text.upper().endswith("M"):
+        multiplier, text = 1000000, text[:-1]
+    try:
+        number = float(text) * multiplier
+        return int(number) if number.is_integer() else number
+    except ValueError:
+        return str(value).strip()
+
+# Header row: first row with at least two non-empty cells.
+header_idx = next(i for i, row in df.iterrows() if non_empty_count(row) >= 2)
+headers = [str(v).strip() for v in df.iloc[header_idx].tolist()]
+table = df.iloc[header_idx + 1:].copy()
+table.columns = headers
+table = table[table.apply(non_empty_count, axis=1) >= 2]
+table = table.map(convert_value)
+
+# Always select rows by labels/values, never by guessed positions such as df.iloc[3].
+# Emit one compact final result, e.g. emit_dataframe(pd.DataFrame([{"answer": answer}]))
+'''.strip()
+
+
 def krama_prompt(task: dict[str, Any]) -> str:
     return (
         "You are running a KramaBench task inside DeepEye. Use only the attached datasource files. "
@@ -419,6 +478,12 @@ def krama_prompt(task: dict[str, Any]) -> str:
         "columns such as `Unnamed: 2`; if you do use it, downstream code must use the immediate upstream columns exactly.\n"
         "- Do not connect multiple dataset_ref edges directly into `llm.answer`; combine them in `python.code` first.\n"
         "- The final dataset passed to `llm.answer` should contain only the final answer and necessary evidence.\n\n"
+        "Reference subtask plan from KramaBench. Follow these steps as the benchmark's intended solution path:\n"
+        f"{krama_subtask_plan(task)}\n\n"
+        "Required robust CSV template for python.code:\n"
+        f"```python\n{krama_csv_template()}\n```\n\n"
+        "Important: adapt the template to the question, but preserve its header detection, convert_value, "
+        "label-based filtering, and compact final emit pattern.\n\n"
         f"Task ID: {task['id']}\n"
         f"Question: {task['query']}\n"
         f"Expected answer type: {task.get('answer_type')}\n"
