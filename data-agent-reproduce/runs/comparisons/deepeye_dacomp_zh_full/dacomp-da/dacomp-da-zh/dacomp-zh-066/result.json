@@ -1,0 +1,26 @@
+{
+  "benchmark": "DAComp-DA",
+  "system": "DeepEye",
+  "task_id": "dacomp-zh-066",
+  "status": "timeout",
+  "session_id": "16bf51a8-0645-4b49-99be-7404065f176c",
+  "chat_start": {
+    "session_id": "16bf51a8-0645-4b49-99be-7404065f176c",
+    "task_id": "3fba54cc-56ae-4017-819d-8bdc1f746c38",
+    "message": "Agent started"
+  },
+  "instruction": "公司工程部门的简历筛选到初面的转化率在过去6个月从35%下降到22%，明显低于市场部门的45%转化率，请你利用 greenhouse__recruitment_performance 表分析工程部门哪些具体职位（如前端、后端、数据工程师）的转化率下降最严重，结合 greenhouse__job_enhanced 表中的招聘经理和面试官配置，识别是否 存在特定招聘经理负责的职位转化率系统性偏低的情况，并量化面试官数量、招聘经理经验年限等因素对转化率的影响。",
+  "sqlite_path": "/Users/xuq/Documents/Research/data-agent-reproduce/repos/DAComp/dacomp-da/tasks_zh/dacomp-zh-066/dacomp-zh-066.sqlite",
+  "container_sqlite_path": "/Users/xuq/Documents/Research/data-agent-reproduce/repos/DeepEye/.benchmark-data/dacomp/dacomp-066.sqlite",
+  "datasource_id": "de4aba6f-3d78-43b1-ab4d-83323723d20c",
+  "text": null,
+  "failure_reason": null,
+  "finalize_attempted": false,
+  "messages": [
+    {
+      "role": "user",
+      "content": "You are running a DAComp data-analysis task inside DeepEye. Use the attached SQLite datasource as the authoritative data source. Produce a detailed Chinese analytical report with quantitative evidence, explicit formulas/rules, and final recommendations. The final answer MUST be written in Chinese only. Do not use English headings or English narrative. Do not invent table names.\n\nWorkflow constraints:\n- For python.code nodes, load the complete upstream datasets with load_dataset_ref(ref) or load_dataset_refs(data). Do not compute from dataset_ref.preview_rows except for schema inspection.\n- The annual_rate_&_churn table is an interest-rate/churn curve by annual interest rate, not a company entity table. Do not merge company credit ratings to the row index of that table.\n- If using the churn curve, derive a rating-specific rule by choosing or optimizing an annual interest rate for each rating, then map that rule to companies by Credit Rating.\n\nTask ID: dacomp-zh-066\nInstruction:\n公司工程部门的简历筛选到初面的转化率在过去6个月从35%下降到22%，明显低于市场部门的45%转化率，请你利用 greenhouse__recruitment_performance 表分析工程部门哪些具体职位（如前端、后端、数据工程师）的转化率下降最严重，结合 greenhouse__job_enhanced 表中的招聘经理和面试官配置，识别是否 存在特定招聘经理负责的职位转化率系统性偏低的情况，并量化面试官数量、招聘经理经验年限等因素对转化率的影响。\n\nDatabase profile:\nSQLite file: dacomp-zh-066.sqlite\n\nTable: greenhouse__job_enhanced\nRows: 191\nColumns: job_id INTEGER, name TEXT, status TEXT, requisition_id INTEGER, created_at TIMESTAMP, departments TEXT, offices TEXT, hiring_managers TEXT, recruiters TEXT, sourcers TEXT, count_total_applications INTEGER, count_active_applications INTEGER, count_hired_applications INTEGER, count_rejected_applications INTEGER, count_prospect_applications INTEGER, count_total_interviews INTEGER, count_completed_interviews INTEGER, avg_interviews_per_application REAL, avg_job_rating REAL, count_rated_applications INTEGER, rating_completion_rate REAL, application_to_interview_rate REAL, interview_to_hire_rate REAL, overall_conversion_rate REAL, created_year INTEGER, created_month INTEGER, days_since_created REAL\nSample rows: [(1, 'Frontend Engineer - and Sons', 'open', 20001, '2024-07-04 00:00:00', 'Engineering', 'San Francisco Office', 'Lisa Wang', 'Lisa Rodriguez, David Kim', 'External Recruiter', 90, 2, 22, 63, 2, 31, 24, 0.34, 4.24, 71, 8.9, 34.44, 70.97, 24.44, 2024, 7, 180.0), (2, 'Frontend Engineer - Ltd', 'open', 20002, '2024-07-04 00:00:00', 'Engineering', 'New York Office', 'David Thompson', 'Lisa Rodriguez, Sarah Johnson', None, 96, 5, 15, 81, 0, 21, 18, 0.22, 4.5, 72, 6.4, 21.88, 71.43, 15.62, 2024, 7, 180.0), (3, 'Frontend Engineer - LLC', 'open', 20003, '2024-07-04 00:00:00', 'Engineering', 'New York Office', 'Mike Rodriguez', 'Mike Chen, Sarah Johnson', 'External Recruiter', 103, 2, 19, 83, 5, 24, 23, 0.23, 3.5, 73, 7.7, 23.3, 79.17, 18.45, 2024, 7, 180.0)]\n\nTable: greenhouse__recruitment_performance\nRows: 191\nColumns: job_id INTEGER, job_title TEXT, job_status TEXT, job_created_at TIMESTAMP, application_year INTEGER, application_quarter INTEGER, total_applications INTEGER, unique_candidates INTEGER, hired_count INTEGER, active_count INTEGER, rejected_count INTEGER, avg_process_days REAL, total_interviews INTEGER, completed_interviews INTEGER, total_scorecards INTEGER, avg_interview_score REAL, hire_rate REAL, interview_rate REAL, interview_to_hire_rate REAL, interview_completion_rate REAL, performance_tier TEXT, is_fast_process INTEGER, has_good_interview_quality INTEGER\nSample rows: [(1, 'Frontend Engineer - and Sons', 'open', '2024-07-04 00:00:00', 2024, 3, 90, 76, 22, 2, 63, 17.68, 31, 24, 23, 3.3, 24.44, 34.44, 70.97, 77.42, 'High', 0, 1), (2, 'Frontend Engineer - Ltd', 'open', '2024-07-04 00:00:00', 2024, 3, 96, 87, 15, 5, 81, 40.32, 21, 18, 16, 3.44, 15.62, 21.88, 71.43, 85.71, 'Low', 0, 1), (3, 'Frontend Engineer - LLC', 'open', '2024-07-04 00:00:00', 2024, 3, 103, 89, 19, 2, 83, 23.83, 24, 23, 23, 3.07, 18.45, 23.3, 79.17, 95.83, 'Low', 1, 1)]\n\nReturn the answer as a Chinese report."
+    }
+  ],
+  "runtime_seconds": 120.332
+}

@@ -1,6 +1,6 @@
 # DAComp 全量当前结果记录
 
-记录时间：2026-07-13
+记录时间：2026-07-16
 
 ## 数据状态
 
@@ -23,6 +23,8 @@
   - DAComp 中文任务优先使用 `tasks_zh/dacomp-zh-xxx/dacomp-zh-xxx.sqlite`。
   - 修复 `continue` 缩进问题，避免 DAComp 任务被整体跳过。
   - 中文收口返回 `No workflow run is available...` 时不覆盖上一轮真实输出。
+  - DAComp 单题等待使用统一硬阈值，主回答和中文收口共享同一个 `--timeout` 预算。
+  - 运行结束时只打印 compact summary，完整消息和报告保存在 `run_summary.json` 与逐题目录，避免终端输出过大。
 
 ## DeepAnalyze 结果
 
@@ -58,34 +60,38 @@ data-agent-reproduce/runs/comparisons/deepanalyze_dacomp_zh_full
 data-agent-reproduce/runs/comparisons/deepeye_dacomp_zh_full
 ```
 
-当前断点结果：
+全量结果：
 
 | 指标 | 数值 |
 |---|---:|
-| 已落盘任务数 | 44 |
-| completed | 20 |
-| failed | 21 |
-| timeout | 3 |
-| 总运行时间 | 4522.311 秒 |
-| 平均每题耗时 | 102.780 秒 |
+| 任务数 | 100 |
+| completed | 28 |
+| failed | 32 |
+| timeout | 40 |
 
-DeepEye 运行中曾使用 900 秒 timeout，`dacomp-zh-012` 耗时 902.135 秒后 timeout。之后为了让全量统计更快收敛，改为 240 秒、再改为 180 秒断点续跑。用户要求提交当前结果时，DeepEye 已停在当前断点。
+阈值策略：
+
+- 前半段曾使用 900 秒、240 秒、180 秒 timeout 进行断点续跑。
+- 为避免少数长尾任务拖住全量测评，后续改为 120 秒单题硬阈值。
+- 从 `dacomp-zh-065` 起，超过阈值的任务直接按 timeout 落盘并进入下一题。
+- `runtime_seconds` 包含历史长等待和跨夜阻塞时间，因此本轮不把总耗时作为公平速度指标；状态分布是当前主要结论。
 
 当前判断：
 
 - DeepEye 已能使用完整 DAComp 中文数据进入 workflow 执行层。
-- 但当前模型/工作流组合稳定性不足，44 题中 completed 仅 20 题。
+- DeepEye 已跑完 DAComp 中文 100 题，但当前模型/工作流组合稳定性不足，completed 仅 28 题。
 - 失败类型主要包括短文本失败、非中文报告、无 assistant 结果 timeout，以及 workflow 输出未能形成可用最终报告。
-- 因 DeepEye 结果仍是 partial run，本报告不把它视为 100 题完整全量分数。
+- 后段大量任务按 120 秒阈值 timeout，说明 DeepEye 后端 workflow 或模型响应存在明显长尾/阻塞风险。
+- 本报告仅统计运行状态，尚未接入 DAComp 官方 LLM judge，因此不能等同于正式质量分数。
 
 ## 横向阶段性结论
 
 | 维度 | DeepAnalyze | DeepEye |
 |---|---|---|
 | DAComp 中文数据接入 | 已接入 | 已接入 |
-| 当前批量进度 | 100/100 | 44/100 |
-| 当前完成率 | 99% | 45.5% |
+| 当前批量进度 | 100/100 | 100/100 |
+| 当前 completed 比例 | 99% | 28% |
 | 主要优势 | 批量链路快，几乎可跑完全量 | 能走 DeepEye 原生 workflow/数据源链路 |
-| 主要风险 | 输出可信度需 judge 或 SQL trace 校验 | 稳定性和最终报告生成不足 |
+| 主要风险 | 输出可信度需 judge 或 SQL trace 校验 | 稳定性、长尾响应和最终报告生成不足 |
 
-下一步建议：保留当前提交作为版本记录；后续若继续 DeepEye 全量，应先增强最终答案提取和 workflow 失败分类，再用断点目录继续剩余任务。
+下一步建议：保留当前提交作为版本记录；后续若继续优化 DeepEye，应优先分析 completed/failed/timeout 的逐题日志，区分模型能力问题、workflow 规划失败、后端阻塞和答案提取失败，再决定是否更换模型或调整 DeepEye 工作流约束。

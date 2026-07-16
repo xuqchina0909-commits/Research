@@ -1,0 +1,3 @@
+工作流规划已停止：Workflow execution failed at node query_gold_platinum (sql.execute): (sqlite3.OperationalError) no such column: c360.revenue_velocity_monthly
+[SQL: SELECT c360.customer_segment, c360.customer_tier, c360.portfolio_contribution_pct, c360.revenue_velocity_monthly, c360.estimated_customer_ltv, c360.cross_stage_engagement_consistency FROM customer360__customer_value_analysis c360 WHERE c360.customer_tier IN ('Gold', 'Platinum') AND c360.portfolio_contribution_pct > 5.0]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)

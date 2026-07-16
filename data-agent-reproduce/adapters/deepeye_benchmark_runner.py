@@ -14,6 +14,7 @@ import re
 import shutil
 import sqlite3
 import time
+from collections import Counter
 from pathlib import Path
 from typing import Any
 
@@ -710,15 +711,18 @@ def run_dacomp(args: argparse.Namespace, client: DeepEyeClient) -> dict[str, Any
             datasource_id = client.create_database_datasource(task_id, "sqlite", conn, session_id)
             before = len(client.get_messages(session_id))
             chat_start = client.start_chat(session_id, dacomp_prompt(task, profile), [datasource_id])
-            text, messages = client.wait_for_assistant(session_id, before, args.timeout)
+            remaining_timeout = max(1, args.timeout - int(time.time() - started))
+            text, messages = client.wait_for_assistant(session_id, before, remaining_timeout)
             finalize_attempted = False
             if text and cjk_ratio(text) < 0.12 and not deepeye_failure_reason(text):
                 finalize_attempted = True
-                before = len(messages)
-                client.start_chat(session_id, dacomp_finalize_prompt(text), [datasource_id])
-                finalized_text, messages = client.wait_for_assistant(session_id, before, min(args.timeout, 300))
-                if finalized_text and "No workflow run is available" not in finalized_text:
-                    text = finalized_text
+                remaining_timeout = max(0, args.timeout - int(time.time() - started))
+                if remaining_timeout > 0:
+                    before = len(messages)
+                    client.start_chat(session_id, dacomp_finalize_prompt(text), [datasource_id])
+                    finalized_text, messages = client.wait_for_assistant(session_id, before, remaining_timeout)
+                    if finalized_text and "No workflow run is available" not in finalized_text:
+                        text = finalized_text
             failure_reason = deepeye_failure_reason(text)
             language_failure = None
             if text and cjk_ratio(text) < 0.12:
@@ -798,7 +802,18 @@ def main() -> None:
     if args.benchmark in {"dacomp", "both"}:
         outputs.append(run_dacomp(args, client))
     write_json(Path(args.output) / "run_summary.json", outputs)
-    print(json.dumps(outputs, ensure_ascii=False, indent=2))
+    compact_outputs = []
+    for output in outputs:
+        statuses = Counter(result.get("status") for result in output.get("results", []))
+        compact_outputs.append(
+            {
+                "benchmark": output.get("benchmark"),
+                "task_count": len(output.get("results", [])),
+                "statuses": dict(statuses),
+                "summary_csv": output.get("summary_csv"),
+            }
+        )
+    print(json.dumps(compact_outputs, ensure_ascii=False, indent=2))
 
 
 if __name__ == "__main__":
